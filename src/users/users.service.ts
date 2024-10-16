@@ -1,9 +1,10 @@
 import { UsersModule } from './users.module';
-import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User, } from './schemas/user-schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import * as crypto from 'crypto'
 import * as bcrypt from 'bcrypt'
 import axios from 'axios';
@@ -50,6 +51,12 @@ export class UsersService {
         try {
             console.log('Iniciando creación de usuario para:', user.email);
 
+            // Verificar si el teléfono es una cadena de 10 caracteres
+            if (typeof user.phone !== 'string' || user.phone.length !== 10) {
+                console.warn('El teléfono debe tener exactamente 10 caracteres y ser una cadena:', user.phone);
+                throw new BadRequestException('El número de teléfono debe tener exactamente 10 caracteres.');
+            }
+
             const userFound = await this.UsersModule.findOne({ email: user.email });
             if (userFound) {
                 console.warn('El correo ya está en uso:', user.email);
@@ -83,5 +90,42 @@ export class UsersService {
             throw new InternalServerErrorException('Error al crear el usuario');
         }
     }
+
+    async loginUser(login: LoginUserDto) {
+        try {
+            const { email, password } = login;
+            console.log(`Intantando iniciar sesion para: ${email}`);
+
+            // Buscar el usuario por correo electrónico
+            const user = await this.UsersModule.findOne({ email });
+            if (!user) {
+                console.log(`El usuario necesita registrarse: ${email}`);
+                throw new NotFoundException('El usuario no está registrado. Por favor, regístrate.');
+            }
+            // Verificar la contraseña
+            const isPasswordMatching = await bcrypt.compare(password, user.password);
+            if (!isPasswordMatching) {
+                console.log(`Contraseña incorrecta para el usuario: ${email}`);
+                throw new UnauthorizedException('Contraseña incorrecta.');
+            }
+
+            console.log(`El usuario está registrado y ha iniciado sesión: ${email}`);
+
+            // Aquí puedes generar y devolver un token JWT si lo deseas
+            // const token = this.generateJwtToken(user);
+            // return { user, token };
+
+            // Para simplificar, devolvemos el usuario
+            return user;
+        } catch (error) {
+            console.error('Error al iniciar sesión:', error);
+            throw error;
+        }
+    }
+    // Opcional: Método para generar un token JWT
+    // private generateJwtToken(user: User): string {
+    //     const payload = { sub: user._id, email: user.email };
+    //     return this.jwtService.sign(payload);
+    // }
 
 }
