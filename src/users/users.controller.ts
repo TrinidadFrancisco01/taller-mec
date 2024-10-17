@@ -24,10 +24,6 @@ export class UsersController {
         return this.userService.verifyCode(email, code)
     }
 
-    @Post("restablecer-password")
-    async restablecerContraseña() {
-        return
-    }
 
     // 1. Solicitar recuperación de contraseña
     @Post('request-password-reset')
@@ -38,14 +34,14 @@ export class UsersController {
 
     // 2. Validar el código de verificación
     @Post('verify-reset-code')
-    async validateResetCode(@Body() body: { email: string, code: string }) {
-        const { email, code } = body;
-        return this.userService.validateResetCode(email, code);
+    async validateResetCode(@Body() body: { code: string }) {
+        return this.userService.validateResetCode(body.code);
     }
 
+   
     // 3. Actualizar la contraseña
     @Post('update-password')
-    async updatePassword(@Body() pass : PasswordUpdate) {
-        return this.userService.updatePassword(pass);
+    async updatePassword(@Body() pass: { password: string }) {
+        return this.userService.updatePassword(pass.password);
     }
 }

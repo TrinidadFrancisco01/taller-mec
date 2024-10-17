@@ -19,6 +19,7 @@ export class UsersService {
     // Estructura para almacenar los intentos de inicio de sesión por usuario
     private loginAttempts: { [email: string]: number } = {};
     private verificationCodes: { [email: string]: { code: string, expiration: Date } } = {};
+    private emailStore: { [key: string]: { email: string; expiration: Date } } = {}; // Almacenar el email y su expiración
 
     constructor(@InjectModel(User.name) private UsersModule: Model<User>, @InjectModel(Incident.name) private IncidentModule: Model<Incident>) { }
 
@@ -87,6 +88,7 @@ export class UsersService {
     }
 
     // 1. Solicitar recuperación de contraseña
+    // Solicitar recuperación de contraseña
     async requestPasswordReset(email: string): Promise<{ message: string }> {
         const user = await this.UsersModule.findOne({ email });
         if (!user) {
@@ -99,6 +101,12 @@ export class UsersService {
             expiration: new Date(Date.now() + 10 * 60000), // Expira en 10 minutos
         };
 
+        // Almacenar el email y su tiempo de expiración
+        this.emailStore[email] = {
+            email,
+            expiration: new Date(Date.now() + 10 * 60000), // Expira en 10 minutos
+        };
+
         await this.sendVerificationEmail(email, resetCode, `
             <p>Tu código de recuperación de contraseña es: <strong>${resetCode}</strong>.</p>
             <p>Este código expirará en 10 minutos.</p>
@@ -107,9 +115,17 @@ export class UsersService {
         return { message: 'Código de recuperación enviado. Por favor, revisa tu correo.' };
     }
 
+
     // 2. Validar el código de verificación para recuperar la contraseña
-    async validateResetCode(email: string, code: string): Promise<{ message: string }> {
-        const reset = this.verificationCodes[email];
+    async validateResetCode(code: string): Promise<{ message: string }> {
+        const emailEntry = Object.entries(this.emailStore).find(([_, entry]) => entry.expiration > new Date());
+        if (!emailEntry) {
+            throw new UnauthorizedException('El tiempo para validar el código ha expirado.');
+        }
+
+        const email = emailEntry[0]; // Extraer el email
+        const reset = this.verificationCodes[email]; // Usar el email guardado
+
         if (!reset || reset.expiration < new Date()) {
             throw new UnauthorizedException('Código de recuperación expirado o no válido.');
         }
@@ -122,49 +138,40 @@ export class UsersService {
     }
 
     // 3. Actualizar la contraseña después de la verificación
-// 3. Actualizar la contraseña después de la verificación
-async updatePassword(pass: PasswordUpdate) {
-    try {
-        const { email, password } = pass;  // Desestructurar el objeto pass
-        console.log(`Intentando cambiar la contraseña de: ${email}`);
-        console.log(`Intentando cambiar la contraseña de: ${pass.password}`);
+    async updatePassword(password: string) {
+        const emailEntry = Object.entries(this.emailStore).find(([_, entry]) => entry.expiration > new Date());
+        if (!emailEntry) {
+            throw new UnauthorizedException('El tiempo para actualizar la contraseña ha expirado.');
+        }
+
+        const email = emailEntry[0]; // Extraer el email
 
         if (!password) {
             throw new Error('La nueva contraseña no puede estar vacía.');
         }
 
-        // Buscar el usuario por correo electrónico
-        const user = await this.UsersModule.findOne({ email });
+        const user = await this.UsersModule.findOne({ email }); // Usar el email guardado
         if (!user) {
-            console.log(`El usuario necesita registrarse: ${email}`);
             throw new NotFoundException('El usuario no está registrado. Por favor, regístrate.');
         }
 
-        // Verificar si la contraseña ha sido comprometida
-        console.log('Verificando si la contraseña ha sido comprometida.');
         const isPwned = await this.checkPasswordPwned(password);
         if (isPwned) {
-            console.warn('La contraseña ha sido comprometida para el usuario:', email);
             throw new ConflictException('La contraseña ha sido comprometida, por favor elige una contraseña diferente.');
         }
 
-        // Hashear la contraseña si es segura
-        console.log('Hasheando la contraseña.');
         const hashPassword = await bcrypt.hash(password, 10);
 
-        // Actualizar la contraseña del usuario en la base de datos
         await this.UsersModule.updateOne(
-            { email: email },
+            { email },
             { $set: { password: hashPassword } }
         );
 
-        return { message: 'Password updated successfully' };
+        // Limpiar el email temporal después de la actualización
+        delete this.emailStore[email]; // Eliminar el email del almacenamiento
 
-    } catch (error) {
-        console.error('Error al actualizar contraseña:', error);
-        throw new InternalServerErrorException('Error al actualizar la contraseña');
+        return { message: 'Contraseña actualizada con éxito' };
     }
-}
 
 
 
