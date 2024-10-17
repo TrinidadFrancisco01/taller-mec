@@ -88,7 +88,6 @@ export class UsersService {
     }
 
     // 1. Solicitar recuperación de contraseña
-    // Solicitar recuperación de contraseña
     async requestPasswordReset(email: string): Promise<{ message: string }> {
         const user = await this.UsersModule.findOne({ email });
         if (!user) {
@@ -111,7 +110,7 @@ export class UsersService {
             <p>Tu código de recuperación de contraseña es: <strong>${resetCode}</strong>.</p>
             <p>Este código expirará en 10 minutos.</p>
         `);
-
+        console.log("Correo de recuperación enviado")
         return { message: 'Código de recuperación enviado. Por favor, revisa tu correo.' };
     }
 
@@ -133,7 +132,7 @@ export class UsersService {
         if (reset.code !== code) {
             throw new UnauthorizedException('Código de recuperación incorrecto.');
         }
-
+        console.log("Codigo de verificacion correcto")
         return { message: 'Código de recuperación verificado correctamente.' };
     }
 
@@ -169,7 +168,7 @@ export class UsersService {
 
         // Limpiar el email temporal después de la actualización
         delete this.emailStore[email]; // Eliminar el email del almacenamiento
-
+        console.log("Cambio correcto de contraseña")
         return { message: 'Contraseña actualizada con éxito' };
     }
 
