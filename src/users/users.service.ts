@@ -285,16 +285,16 @@ export class UsersService {
                 );
                 console.log(`Usuario bloqueado: ${email}. Se restablecerá el estado en 5 segundos.`);
 
-                // Restablecer el estado del usuario a 'true' después de 10 segundos
+                // Restablecer el estado del usuario a 'true' después de 5 minutos
                 setTimeout(async () => {
                     await this.UsersModule.updateOne(
                         { email: email },
                         { $set: { estado: true } } // Actualizar el estado a true
-
                     );
                     this.loginAttempts[email] = 0;
                     console.log(`Estado del usuario ${email} restablecido a 'true'.`);
-                }, 10000); // 5000 ms = 10 segundos
+                }, 300000); // 300000 ms = 5 minutos
+
 
 
                 throw new UnauthorizedException('Usuario bloqueado debido a demasiados intentos fallidos.');
