@@ -1,5 +1,7 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
+export type UserDocument = User & Document;
 @Schema({
     timestamps: true,
 })
@@ -7,35 +9,49 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 export class User {
     @Prop({
         required: true,
-        trim:true,
+        trim: true,
     })
-    name:string;
+    name: string;
 
     @Prop({
         required: true,
         trim: true,
     })
-    surname:string;
+    surname: string;
 
     @Prop({
-        required:true,
-        trim:true,
-        unique:true
+        required: true,
+        trim: true,
+        unique: true
     })
-    email:string;
+    email: string;
 
     @Prop({
-        required:true,
-        trim:true
+        required: true,
+        trim: true
     })
-    phone:string;
+    phone: string;
 
 
     @Prop({
-        required:true,
-        trim:true
+        required: true,
+        trim: true
     })
-    password:string;
+    password: string;
+
+    @Prop({
+        required: true,
+        type: Boolean, // Definimos que es un booleano
+        default: true, // Puedes establecer un valor por defecto si lo deseas
+    })
+    estado: boolean;
+
+    @Prop({
+        type: Number,
+        default: 0, // Inicializamos el contador en 0
+    })
+    loginAttempts: number;
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
