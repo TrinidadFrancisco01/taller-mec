@@ -23,14 +23,29 @@ export class UsersController {
         const { email, code } = body;
         return this.userService.verifyCode(email, code)
     }
-    
+
     @Post("restablecer-password")
-    async restablecerContraseña(){
-        return 
+    async restablecerContraseña() {
+        return
     }
 
-    /*@Patch("change-password/:id")
-    async changePassword(@Param("id") id: string, @Body() updatePass: PasswordUpdate) {
-        return this.userService.+(id, updatePass);
-    }*/
+    // 1. Solicitar recuperación de contraseña
+    @Post('request-password-reset')
+    async requestPasswordReset(@Body() body: { email: string }) {
+        const { email } = body;
+        return this.userService.requestPasswordReset(email);
+    }
+
+    // 2. Validar el código de verificación
+    @Post('verify-reset-code')
+    async validateResetCode(@Body() body: { email: string, code: string }) {
+        const { email, code } = body;
+        return this.userService.validateResetCode(email, code);
+    }
+
+    // 3. Actualizar la contraseña
+    @Post('update-password')
+    async updatePassword(@Body() pass : PasswordUpdate) {
+        return this.userService.updatePassword(pass);
+    }
 }

@@ -8,6 +8,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { Incident } from './schemas/incident-schema';
 import * as crypto from 'crypto'
 import * as bcrypt from 'bcrypt'
+import { createHash } from 'crypto';
 import axios from 'axios';
 import { error } from 'console';
 import * as nodemailer from 'nodemailer';
@@ -40,7 +41,8 @@ export class UsersService {
 
         try {
             console.log(`Consultando HIBP API con el prefijo: ${hashPrefix}`);
-            const response = await axios.get(`https://api.pwnedpasswords.com/range/${hashPrefix}`);
+            const response = await axios.get(`https://api.pwnedpasswords.com/range/${hashPrefix}`, { timeout: 5000 }); // Tiempo de espera de 5 segundos
+
             const hashes = response.data.split('\n');
             for (let hash of hashes) {
                 const [suffix, count] = hash.split(':');
@@ -63,26 +65,109 @@ export class UsersService {
         const transporter = nodemailer.createTransport({
             service: 'gmail', // Cambia el servicio según tu proveedor de correo
             auth: {
-                user: "tallermecanicoheber@gmail.com", // Tu correo, idealmente desde variables de entorno
-                pass: "jnob kscj qcgf exer", // Contraseña o token de aplicación desde variables de entorno
+                user: "tallermecanicoheber@gmail.com", // Tu correo
+                pass: "jnob kscj qcgf exer", // Contraseña o token de aplicación
             },
         });
 
         const mailOptions = {
-            from: process.env.EMAIL_USER, // El correo desde el que se envía
-            to: email, // El correo del usuario
-            subject: 'Código de verificación',
-            text: `Tu código de verificación es: ${code}. Este código expirará en 10 minutos.`,
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Código de recuperación de contraseña',
+            text: `Tu código de recuperación es: ${code}. Este código expirará en 10 minutos.`,
         };
 
         try {
             await transporter.sendMail(mailOptions);
-            console.log('Correo de verificación enviado a:', email);
+            console.log('Correo de recuperación enviado a:', email);
         } catch (error) {
             console.error('Error al enviar el correo:', error);
-            throw new InternalServerErrorException('Error al enviar el correo de verificación');
+            throw new InternalServerErrorException('Error al enviar el correo de recuperación');
         }
     }
+
+    // 1. Solicitar recuperación de contraseña
+    async requestPasswordReset(email: string): Promise<{ message: string }> {
+        const user = await this.UsersModule.findOne({ email });
+        if (!user) {
+            throw new NotFoundException('El correo no está registrado.');
+        }
+
+        const resetCode = this.generateVerificationCode();
+        this.verificationCodes[email] = {
+            code: resetCode,
+            expiration: new Date(Date.now() + 10 * 60000), // Expira en 10 minutos
+        };
+
+        await this.sendVerificationEmail(email, resetCode, `
+            <p>Tu código de recuperación de contraseña es: <strong>${resetCode}</strong>.</p>
+            <p>Este código expirará en 10 minutos.</p>
+        `);
+
+        return { message: 'Código de recuperación enviado. Por favor, revisa tu correo.' };
+    }
+
+    // 2. Validar el código de verificación para recuperar la contraseña
+    async validateResetCode(email: string, code: string): Promise<{ message: string }> {
+        const reset = this.verificationCodes[email];
+        if (!reset || reset.expiration < new Date()) {
+            throw new UnauthorizedException('Código de recuperación expirado o no válido.');
+        }
+
+        if (reset.code !== code) {
+            throw new UnauthorizedException('Código de recuperación incorrecto.');
+        }
+
+        return { message: 'Código de recuperación verificado correctamente.' };
+    }
+
+    // 3. Actualizar la contraseña después de la verificación
+// 3. Actualizar la contraseña después de la verificación
+async updatePassword(pass: PasswordUpdate) {
+    try {
+        const { email, password } = pass;  // Desestructurar el objeto pass
+        console.log(`Intentando cambiar la contraseña de: ${email}`);
+        console.log(`Intentando cambiar la contraseña de: ${pass.password}`);
+
+        if (!password) {
+            throw new Error('La nueva contraseña no puede estar vacía.');
+        }
+
+        // Buscar el usuario por correo electrónico
+        const user = await this.UsersModule.findOne({ email });
+        if (!user) {
+            console.log(`El usuario necesita registrarse: ${email}`);
+            throw new NotFoundException('El usuario no está registrado. Por favor, regístrate.');
+        }
+
+        // Verificar si la contraseña ha sido comprometida
+        console.log('Verificando si la contraseña ha sido comprometida.');
+        const isPwned = await this.checkPasswordPwned(password);
+        if (isPwned) {
+            console.warn('La contraseña ha sido comprometida para el usuario:', email);
+            throw new ConflictException('La contraseña ha sido comprometida, por favor elige una contraseña diferente.');
+        }
+
+        // Hashear la contraseña si es segura
+        console.log('Hasheando la contraseña.');
+        const hashPassword = await bcrypt.hash(password, 10);
+
+        // Actualizar la contraseña del usuario en la base de datos
+        await this.UsersModule.updateOne(
+            { email: email },
+            { $set: { password: hashPassword } }
+        );
+
+        return { message: 'Password updated successfully' };
+
+    } catch (error) {
+        console.error('Error al actualizar contraseña:', error);
+        throw new InternalServerErrorException('Error al actualizar la contraseña');
+    }
+}
+
+
+
 
     async verifyCode(email: string, code: string): Promise<{ message: string }> {
         const verification = this.verificationCodes[email];
