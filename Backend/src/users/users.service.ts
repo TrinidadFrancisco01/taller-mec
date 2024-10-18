@@ -72,7 +72,7 @@ export class UsersService {
         });
 
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: 'tallermecanicoheber@gmail.com',
             to: email,
             subject: 'Código de recuperación de contraseña',
             text: `Tu código de recuperación es: ${code}. Este código expirará en 10 minutos.`,
