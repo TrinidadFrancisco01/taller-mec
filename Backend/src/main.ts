@@ -8,10 +8,11 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'https://tallerheber.losdela.com',  // Origen HTTPS
+      'https://tallerheber.losdela.com/login',  // Origen HTTPS
       'http://tallerheber.losdela.com',   // Origen HTTP
       'http://localhost:4200',          // Origen local para desarrollo
     ],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE, OPTIONS',  // Métodos permitidos
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',  // Métodos permitidos
     credentials: true,  // Si necesitas habilitar el envío de cookies o credenciales
   });
 
