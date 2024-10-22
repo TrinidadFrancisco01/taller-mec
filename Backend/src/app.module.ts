@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MisionModule } from './mision/mision.module';
 import { VisionModule } from './vision/vision.module';
 import { HolaController } from './hola/hola.controller';
+import { RegulatorydocumentModule } from './regulatorydocument/regulatorydocument.module';
 
 
 @Module({
@@ -14,6 +15,7 @@ import { HolaController } from './hola/hola.controller';
     UsersModule,
     MisionModule,
     VisionModule,
+    RegulatorydocumentModule,
     ],
   controllers: [AppController, HolaController,],
   providers: [AppService],
