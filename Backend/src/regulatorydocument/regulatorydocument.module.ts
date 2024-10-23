@@ -7,8 +7,8 @@ import { RegulatoryDocument, RegulatoryDocumentSchema } from './schema/regulator
 @Module({
   imports:[
     MongooseModule.forFeature([{name: RegulatoryDocument.name, schema:RegulatoryDocumentSchema}])
-  ],
-  providers: [RegulatorydocumentService],
-  controllers: [RegulatorydocumentController]
+  ,],
+  providers: [RegulatorydocumentService, ],
+  controllers: [RegulatorydocumentController, ]
 })
 export class RegulatorydocumentModule {}

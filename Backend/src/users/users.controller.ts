@@ -3,6 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { PasswordUpdate } from './dto/update-user.dto';
+import { Response } from 'express';
+import { User } from './schemas/user-schema';
 
 @Controller('users')
 export class UsersController {
@@ -18,11 +20,6 @@ export class UsersController {
         return this.userService.loginUser(login);
     }
 
-    @Post("verify-code")
-    async verifyCode(@Body() body: { email: string, code: string }) {
-        const { email, code } = body;
-        return this.userService.verifyCode(email, code)
-    }
 
 
     // 1. Solicitar recuperación de contraseña
@@ -38,10 +35,12 @@ export class UsersController {
         return this.userService.validateResetCode(body.code);
     }
 
-   
+
     // 3. Actualizar la contraseña
     @Post('update-password')
     async updatePassword(@Body() pass: { password: string }) {
         return this.userService.updatePassword(pass.password);
     }
+
+   
 }

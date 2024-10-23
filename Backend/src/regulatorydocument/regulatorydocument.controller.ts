@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, Param } from '@nestjs/common';
+
+import { Body, Controller, Get, Post, Param, UseGuards } from '@nestjs/common';
 import { CreateRegulatoryDocument } from './dto/create-regulatorydocument.dto';
 import { RegulatorydocumentService } from './regulatorydocument.service';
 import { UpdateRegulatoryDocument } from './dto/update-regulatorydocument.dto';
 import { RegulatoryDocDocument } from './schema/regulatorydocument-schema';
 import { DeleteRegulatoryDocument } from './dto/delete-regulatorydocument.dto';
+
 
 @Controller('regulatorydocument')
 export class RegulatorydocumentController {
@@ -36,7 +38,7 @@ export class RegulatorydocumentController {
     async obtenerDocumentos(): Promise<RegulatoryDocDocument[]> {
         return this.regulatoryDocumentService.getRegulatoryDocumets();
     }
-    
+
     @Get('active/privacy-policy')
     async getActivePrivacyPolicies() {
         return this.regulatoryDocumentService.getActivePrivacyPolicyDocuments();

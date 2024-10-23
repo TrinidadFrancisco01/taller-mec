@@ -1,0 +1,29 @@
+import { ContactdataModule } from './contactdata.module';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { ContactData, ContactDataDocument } from './schema/contact-data-schema';
+import { Model } from 'mongoose';
+import { CreateContactDataDto } from './dto/create-contact-data.dto';
+
+@Injectable()
+export class ContactdataService {
+    constructor(@InjectModel(ContactData.name) private ContactdataModule: Model<ContactDataDocument>){}
+
+    async createContactData(contactData: CreateContactDataDto){
+        const contactDataCreated = await this.ContactdataModule.create(contactData);
+        return contactDataCreated;
+    }
+
+    async updateContactData(id:string, updateDto: CreateContactDataDto): Promise<ContactDataDocument>{
+        const existingContactData = await this.ContactdataModule.findById(id);
+        if(!existingContactData){
+            throw new NotFoundException(`Red social con ID ${id} no encontrada`)
+        }
+        existingContactData.direccion = updateDto.direccion;
+        existingContactData.correo= updateDto.correo;
+        existingContactData.telefono= updateDto.telefono;
+
+        return existingContactData.save();
+    }
+    
+}

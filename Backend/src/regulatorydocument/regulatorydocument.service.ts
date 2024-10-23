@@ -1,5 +1,5 @@
 import { UpdateRegulatoryDocument } from './dto/update-regulatorydocument.dto';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { RegulatoryDocDocument, RegulatoryDocument } from './schema/regulatorydocument-schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';

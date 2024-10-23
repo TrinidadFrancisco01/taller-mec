@@ -13,6 +13,7 @@ import axios from 'axios';
 import { error } from 'console';
 import * as nodemailer from 'nodemailer';
 import { PasswordUpdate } from './dto/update-user.dto';
+import * as jwt from 'jsonwebtoken'; // Importa jsonwebtoken
 
 @Injectable()
 export class UsersService {
@@ -228,6 +229,8 @@ export class UsersService {
                 ...user,
                 password: hashPassword,
                 estado: true,
+                bloked: false,
+                role: 'client',
             });
 
             console.log('Guardando el usuario en la base de datos.');
@@ -303,39 +306,46 @@ export class UsersService {
             }
 
 
-            this.loginAttempts[email] = 0;
+            this.loginAttempts[email] = 0
 
-            // Si la contraseña es correcta, generar el código de verificación
-            const verificationCode = this.generateVerificationCode();
-            // Almacenar el código de verificación con una expiración de 10 minutos
-            this.verificationCodes[email] = {
-                code: verificationCode,
-                expiration: new Date(Date.now() + 10 * 60000), // Expira en 10 minutos
+            // Si la contraseña es correcta, generar el token JWT
+            const token = this.generateToken(user);
+
+            // Retornar el token y los datos del usuario
+            return {
+                message: 'Inicio de sesión exitoso',
+                user: {
+                    email: user.email,
+                    nombre: user.name, // Asegúrate de que el campo exista
+                    estado: user.estado,
+                    role: user.role,
+                    // Agrega cualquier otro campo que desees devolver
+                },
+                token,
             };
-
-            // Enviar el código al correo del usuario
-            await this.sendVerificationEmail(email, verificationCode, `
-            <p>Tu código de verificación es: <strong>${verificationCode}</strong>.</p>
-            <p>Este código expirará en 10 minutos.</p>
-        `);
-
-            console.log(`Código de verificación enviado a ${email}`);
-            return { message: 'Código de verificación enviado. Por favor, revisa tu correo electrónico.' };
-
-            // Aquí puedes generar y devolver un token JWT si lo deseas
-            // const token = this.generateJwtToken(user);
-            // return { user, token };
-
-            // Para simplificar, devolvemos el usuario
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
             throw error;
         }
     }
-    // Opcional: Método para generar un token JWT
-    // private generateJwtToken(user: User): string {
-    //     const payload = { sub: user._id, email: user.email };
-    //     return this.jwtService.sign(payload);
-    // }
+
+    // Método para generar un token JWT
+    private generateToken(user: any) {
+        const payload = { role: user.role, id: user._id };
+        const secret = 'dff3c7ef5be6b1dfa77350c0eeb786c529ecc1312f4660b794cbcc1562ef924a'; // Asegúrate de que esto no sea undefined
+        if (!secret) {
+            throw new Error('JWT_SECRET no está definido');
+        }
+        return jwt.sign(payload, secret, { expiresIn: '1h' });
+    }
+
+    // Método para buscar un usuario por ID
+    async findById(id: string): Promise<User> {
+        const user = await this.UsersModule.findById(id).exec();
+        if (!user) {
+            throw new NotFoundException('Usuario no encontrado');
+        }
+        return user;
+    }
 
 }

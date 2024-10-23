@@ -41,10 +41,24 @@ export class User {
 
     @Prop({
         required: true,
+        trim: true
+    })
+    role:string;
+
+
+    @Prop({
+        required: true,
         type: Boolean, // Definimos que es un booleano
         default: true, // Puedes establecer un valor por defecto si lo deseas
     })
     estado: boolean;
+
+    @Prop({
+        required: true,
+        type: Boolean, // Definimos que es un booleano
+        default: false, // Puedes establecer un valor por defecto si lo deseas
+    })
+    bloked: boolean
 
     @Prop({
         type: Number,
