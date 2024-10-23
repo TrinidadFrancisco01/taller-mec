@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ContactData, ContactDataDocument } from './schema/contact-data-schema';
 import { Model } from 'mongoose';
 import { CreateContactDataDto } from './dto/create-contact-data.dto';
+import { create } from 'domain';
 
 @Injectable()
 export class ContactdataService {
@@ -25,5 +26,10 @@ export class ContactdataService {
 
         return existingContactData.save();
     }
+
+    async getMostRecentContact(): Promise<ContactData>{
+        return this.ContactdataModule.findOne().sort({createdAt:-1}).exec();
+    }
+
     
 }

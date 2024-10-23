@@ -15,7 +15,7 @@ import { TitlepageModule } from './profilecompany/titlepage/titlepage.module';
 
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb+srv://trinidad:trinidad2004@cluster0.ivkew.mongodb.net/Taller'),
+  imports: [MongooseModule.forRoot('mongodb://localhost:27017/Taller'),
     UsersModule,
     MisionModule,
     VisionModule,

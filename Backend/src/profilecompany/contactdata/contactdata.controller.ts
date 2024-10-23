@@ -1,6 +1,7 @@
-import { Body, Controller, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ContactdataService } from './contactdata.service';
 import { CreateContactDataDto } from './dto/create-contact-data.dto';
+import { ContactData } from './schema/contact-data-schema';
 
 @Controller('contactdata')
 export class ContactdataController {
@@ -17,5 +18,10 @@ export class ContactdataController {
         @Body() updateDto: CreateContactDataDto,
     ){
         return this.contactDatService.updateContactData(id, updateDto);
+    }
+
+    @Get('recent')
+    getMostRecentContact(): Promise<ContactData>{
+        return this.contactDatService.getMostRecentContact();
     }
 }
