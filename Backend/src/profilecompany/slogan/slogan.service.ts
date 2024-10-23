@@ -23,4 +23,8 @@ export class SloganService {
 
         return existingSlogan.save();
     }
+
+    async getMostRecentSlogan():Promise<Slogan>{
+        return this.SloganModule.findOne().sort({createdAt:-1 }).exec();
+    }
 }
