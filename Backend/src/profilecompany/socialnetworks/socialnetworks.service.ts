@@ -24,7 +24,6 @@ export class SocialnetworksService {
 
         // Actualizar los campos
         existingSocialNetwork.type = updateDto.type; // Agregado
-        existingSocialNetwork.platform = updateDto.platform;
         existingSocialNetwork.url = updateDto.url;
 
         // Guardar los cambios

@@ -9,10 +9,6 @@ export class CreateSocialNetworkDto {
     type: string; // Tipo de red social (ej: Facebook, Twitter, etc.)
 
     @IsNotEmpty()
-    @IsString()
-    platform: string; // Nombre de la red social (ej: Página de Facebook)
-
-    @IsNotEmpty()
     @IsUrl({}, { message: 'La URL debe ser válida' }) // Validación de URL
     url: string; // Enlace a la red social
 }

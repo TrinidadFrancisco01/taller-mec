@@ -15,12 +15,6 @@ export class SocialNetworks {
     })
     type: string; // Tipo de red social (ej: Facebook)
 
-    @IsNotEmpty() // Valida que el campo no esté vacío
-    @IsString() // Valida que sea una cadena
-    @Prop({
-        required: true,
-    })
-    platform: string; // Nombre de la red social (ej: Página de Facebook)
 
     @IsNotEmpty() // Valida que el campo no esté vacío
     @IsUrl({}, { message: 'La URL debe ser válida' }) // Valida que sea una URL
