@@ -29,6 +29,10 @@ export class CreateUserDto{
 
     @IsString()
     @IsNotEmpty()
+    role:string;
+    
+    @IsString()
+    @IsNotEmpty()
     @MinLength(8)
     @MaxLength(8)
     password:string;
@@ -36,5 +40,11 @@ export class CreateUserDto{
     @IsBoolean()
     @IsNotEmpty()
     estado: boolean;
+
+    @IsBoolean()
+    @IsNotEmpty()
+    bloked: boolean;
+
+
 
 }
