@@ -1,5 +1,5 @@
 import { UsersModule } from './users.module';
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException, Res, UnauthorizedException } from '@nestjs/common';
 import { User, UserDocument, } from './schemas/user-schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -14,6 +14,7 @@ import { error } from 'console';
 import * as nodemailer from 'nodemailer';
 import { PasswordUpdate } from './dto/update-user.dto';
 import * as jwt from 'jsonwebtoken'; // Importa jsonwebtoken
+import { Response, Request } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -76,7 +77,49 @@ export class UsersService {
             from: 'tallermecanicoheber@gmail.com',
             to: email,
             subject: 'Código de recuperación de contraseña',
-            text: `Tu código de recuperación es: ${code}. Este código expirará en 10 minutos.`,
+            html: `<!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Código de Recuperación de Contraseña</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            background-color: #f7f7f7;
+                            margin: 0;
+                            padding: 20px;
+                        }
+                        .container {
+                            max-width: 600px;
+                            margin: 0 auto;
+                            padding: 20px;
+                            border: 1px solid #0056b3;
+                            border-radius: 8px;
+                            background-color: #ffffff;
+                        }
+                        h2 {
+                            color: #0056b3;
+                        }
+                        p {
+                            color: #333;
+                        }
+                        .code {
+                            color: #e0a800; /* Color amarillo más oscuro */
+                            font-weight: bold;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <h2>Código de Recuperación de Contraseña</h2>
+                        <p>Tu código de recuperación es: <span class="code">${code}</span>.</p>
+                        <p>Este código expirará en 10 minutos.</p>
+                        <p>Si no solicitaste este código, puedes ignorar este correo.</p>
+                    </div>
+                </body>
+                </html>`,
+
         };
 
         try {
@@ -244,7 +287,7 @@ export class UsersService {
         }
     }
 
-    async loginUser(login: LoginUserDto) {
+    async loginUser(login: LoginUserDto, @Res() res: Response) {
         try {
             const { email, password } = login;
             console.log(`Intantando iniciar sesion para: ${email}`);
@@ -260,10 +303,20 @@ export class UsersService {
                 console.log(`El usuario necesita registrarse: ${email}`);
                 throw new NotFoundException('El usuario no está registrado. Por favor, regístrate.');
             }
+
+            // Verificar si el usuario está bloqueado
+            if (user.bloked) throw new UnauthorizedException('El usuario está bloqueado por el administrador.');
+
             // Verificar si el usuario está activo
             if (!user.estado) {
                 console.log(`El usuario está inactivo: ${email}`);
-                throw new UnauthorizedException('El usuario está inactivo. Contacta al administrador.');
+                const incident = new this.IncidentModule({
+                    email,
+                    timestamp: new Date(),
+                    description: `Bloqueado`
+                });
+                await incident.save();
+                throw new UnauthorizedException('El usuario está inactivo. Excedio el número de intentos.');
             }
 
             // Verificar la contraseña
@@ -281,12 +334,13 @@ export class UsersService {
                     await incident.save();
                     throw new UnauthorizedException(`Contraseña incorrecta,intentos:${this.loginAttempts[email]}`);
                 }
+
                 // Actualizar el estado del usuario a 'false' en la base de datos
                 await this.UsersModule.updateOne(
                     { email: email },    // Filtro de búsqueda por email
                     { $set: { estado: false } }  // Actualizar el estado a false
                 );
-                console.log(`Usuario bloqueado: ${email}. Se restablecerá el estado en 5 segundos.`);
+                console.log(`Usuario bloqueado: ${email}. Se restablecerá el estado en 5 minutos.`);
 
                 // Restablecer el estado del usuario a 'true' después de 5 minutos
                 setTimeout(async () => {
@@ -298,31 +352,51 @@ export class UsersService {
                     console.log(`Estado del usuario ${email} restablecido a 'true'.`);
                 }, 300000); // 300000 ms = 5 minutos
 
-
-
                 throw new UnauthorizedException('Usuario bloqueado debido a demasiados intentos fallidos.');
 
-
             }
-
-
             this.loginAttempts[email] = 0
+
+            const resetCode = this.generateVerificationCode();
+            this.verificationCodes[email] = {
+                code: resetCode,
+                expiration: new Date(Date.now() + 10 * 60000), // Expira en 10 minutos
+            };
+
+            // Almacenar el email y su tiempo de expiración
+            this.emailStore[email] = {
+                email,
+                expiration: new Date(Date.now() + 10 * 60000), // Expira en 10 minutos
+            };
 
             // Si la contraseña es correcta, generar el token JWT
             const token = this.generateToken(user);
 
-            // Retornar el token y los datos del usuario
-            return {
+            // Establecer la cookie con el token
+            res.cookie('token', token, {
+                httpOnly: true,  // Para evitar que el frontend pueda acceder a la cookie
+                secure: true,    // Asegúrate de usarlo en producción con HTTPS
+                maxAge: 3600000  // Expira en 1 hora (en milisegundos)
+            });
+
+
+            // Guardar el token en una cookie (con opciones de seguridad)
+            res.cookie('jwt', token, {
+                httpOnly: true,   // Asegura que la cookie no sea accesible desde JavaScript
+                secure: process.env.NODE_ENV === 'production', // Solo en HTTPS en producción
+                sameSite: 'strict',  // Previene ataques CSRF
+                maxAge: 24 * 60 * 60 * 1000,  // Expiración en 1 día
+            });
+            // Retornar el token y los datos del usuario en la respuesta
+            return res.json({
                 message: 'Inicio de sesión exitoso',
                 user: {
                     email: user.email,
-                    nombre: user.name, // Asegúrate de que el campo exista
-                    estado: user.estado,
                     role: user.role,
-                    // Agrega cualquier otro campo que desees devolver
+                    // Otros campos que desees devolver
                 },
-                token,
-            };
+                token  // También puedes devolver el token si lo necesitas en el frontend
+            });
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
             throw error;
@@ -337,15 +411,6 @@ export class UsersService {
             throw new Error('JWT_SECRET no está definido');
         }
         return jwt.sign(payload, secret, { expiresIn: '1h' });
-    }
-
-    // Método para buscar un usuario por ID
-    async findById(id: string): Promise<User> {
-        const user = await this.UsersModule.findById(id).exec();
-        if (!user) {
-            throw new NotFoundException('Usuario no encontrado');
-        }
-        return user;
     }
 
 }

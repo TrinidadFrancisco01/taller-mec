@@ -4,8 +4,11 @@ import * as cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv'; // Asegúrate de usar el asterisco aquí
 
 async function bootstrap() {
+
+  
   dotenv.config(); // Cargar las variables de entorno
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
   app.useLogger(['error', 'warn', 'log', 'debug', 'verbose']); // Habilita todos los niveles de log
   // Habilita CORS especificando solo el origen del frontend y evitando redirecciones
   app.enableCors({
@@ -15,7 +18,8 @@ async function bootstrap() {
   });
 
   const port = process.env.PORT || 3000;
-  app.use(cookieParser());
+  // Usar el middleware de cookie-parser
+
   await app.listen(port);
 
   const serverUrl = await app.getUrl();

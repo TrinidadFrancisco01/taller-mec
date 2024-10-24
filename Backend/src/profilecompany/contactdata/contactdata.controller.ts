@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { ContactdataService } from './contactdata.service';
 import { CreateContactDataDto } from './dto/create-contact-data.dto';
 import { ContactData } from './schema/contact-data-schema';
+import { Response, Request } from 'express';
+import * as jwt from 'jsonwebtoken'; // Asegúrate de tener jsonwebtoken instalado.
 
 @Controller('contactdata')
 export class ContactdataController {
@@ -23,5 +25,11 @@ export class ContactdataController {
     @Get('recent')
     getMostRecentContact(): Promise<ContactData>{
         return this.contactDatService.getMostRecentContact();
+    }
+
+    // Endpoint para obtener todos los documentos de la base de datos
+    @Get('all')
+    async getAllContacts(): Promise<ContactData[]> {
+        return this.contactDatService.getAllContacts();
     }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { SloganService } from './slogan.service';
 import { CreateSloganDto } from './dto/create-slogan.dto';
 import { Slogan } from './schema/slogan-schema';
@@ -19,6 +19,7 @@ export class SloganController {
     ){
         return this.sloganService.updateSlogan(id,updateDto);
     }
+
 
     @Get('recent')
     getAllMostRecentSlogan():Promise<Slogan>{

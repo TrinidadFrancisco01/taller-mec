@@ -31,5 +31,8 @@ export class ContactdataService {
         return this.ContactdataModule.findOne().sort({createdAt:-1}).exec();
     }
 
-    
+    // Nueva función para traer todos los documentos
+    async getAllContacts(): Promise<ContactData[]> {
+        return this.ContactdataModule.find().exec();  // Trae todos los documentos
+    }
 }

@@ -12,10 +12,10 @@ import { ContactdataModule } from './profilecompany/contactdata/contactdata.modu
 import { SloganModule } from './profilecompany/slogan/slogan.module';
 import { SocialnetworksModule } from './profilecompany/socialnetworks/socialnetworks.module';
 import { TitlepageModule } from './profilecompany/titlepage/titlepage.module';
-
+import { IncidentmonitorModule } from './incidentmonitor/incidentmonitor.module';
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb://localhost:27017/Taller'),
+  imports: [MongooseModule.forRoot('mongodb+srv://trinidad:trinidad2004@cluster0.ivkew.mongodb.net/Taller'),
     UsersModule,
     MisionModule,
     VisionModule,
@@ -24,6 +24,7 @@ import { TitlepageModule } from './profilecompany/titlepage/titlepage.module';
     SloganModule,
     SocialnetworksModule,
     TitlepageModule,
+    IncidentmonitorModule,
     ],
   controllers: [AppController, HolaController,],
   providers: [AppService],
