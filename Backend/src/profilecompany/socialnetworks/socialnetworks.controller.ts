@@ -23,6 +23,11 @@ export class SocialnetworksController {
         return { message: `Red social con ID ${id} eliminada correctamente.` };
     }
 
+    @Get('most-recent')
+    async getMostRecent(): Promise<SocialNetworksDocument | null> {
+        return this.socialNetService.getMostRecentSocialNetwork();
+    }
+
     // Funciones para obtener la red social más reciente de cada plataforma
     @Get('most-recent/facebook')
     async getMostRecentFacebook(): Promise<SocialNetworksDocument | null> {

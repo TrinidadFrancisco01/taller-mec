@@ -41,6 +41,15 @@ export class SocialnetworksService {
         return `Red social con ID ${id} eliminada correctamente.`;
     }
 
+    // Función para obtener la red social más reciente de cualquier tipo
+    async getMostRecentSocialNetwork(): Promise<SocialNetworksDocument | null> {
+        return await this.SocialnetworksModule
+            .findOne() // No filtramos por tipo
+            .sort({ createdAt: -1 }) // Ordenar por fecha de creación descendente
+            .exec();
+    }
+
+
     // Función para obtener la red social más reciente de Facebook
     async getMostRecentFacebook(): Promise<SocialNetworksDocument | null> {
         return await this.SocialnetworksModule
