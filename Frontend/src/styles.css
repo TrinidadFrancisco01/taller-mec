@@ -1,0 +1,46 @@
+/* styles.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tema oscuro */
+.dark-theme {
+  @apply bg-gray-900 text-gray-200; /* Fondo oscuro y texto claro */
+}
+
+.dark-theme header {
+  @apply bg-gray-800; /* Fondo del header oscuro */
+}
+
+.dark-theme footer {
+  @apply bg-gray-800; /* Fondo del footer oscuro */
+}
+
+.dark-theme a {
+  @apply text-yellow-400 hover:text-yellow-300; /* Color de los enlaces en tema oscuro */
+}
+
+.dark-theme h1, .dark-theme h2, .dark-theme h3, .dark-theme h4, .dark-theme p {
+  @apply text-gray-200; /* Color de texto para encabezados y párrafos */
+}
+
+/* Tema claro */
+.light-theme {
+  @apply bg-white text-gray-900; /* Fondo claro y texto oscuro */
+}
+
+.light-theme header {
+  @apply bg-gray-100; /* Fondo del header claro */
+}
+
+.light-theme footer {
+  @apply bg-gray-100; /* Fondo del footer claro */
+}
+
+.light-theme a {
+  @apply text-blue-500 hover:text-blue-700; /* Color de los enlaces en tema claro */
+}
+
+.light-theme h1, .light-theme h2, .light-theme h3, .light-theme h4, .light-theme p {
+  @apply text-gray-900; /* Color de texto para encabezados y párrafos */
+}

@@ -1,0 +1,131 @@
+<div class="max-w-7xl mx-auto p-8">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+    <!-- Sección de Contacto -->
+    <section class="space-y-6 bg-transparent rounded-xl border border-gray-400 p-8">
+      <div class="space-y-2">
+        <h2 class="text-2xl font-semibold text-yellow-400">Información de Contacto</h2>
+        <p class="text-gray-200 text-sm">Actualiza los datos de contacto principales</p>
+      </div>
+      
+      <form (submit)="updateContactInfo()" class="space-y-4">
+        <div class="space-y-4">
+          <div>
+            <label class="text-sm font-medium text-yellow-400">Dirección</label>
+            <input 
+              type="text" 
+              [(ngModel)]="contactInfo().direccion" 
+              name="direccion"
+              class="mt-1 block w-full rounded-md border border-gray-600 p-3 text-gray-900 shadow-sm"
+              placeholder="Ingresa la dirección"
+            >
+          </div>
+
+          <div>
+            <label class="text-sm font-medium text-yellow-400">Correo Electrónico</label>
+            <input 
+              type="email" 
+              [(ngModel)]="contactInfo().correo" 
+              name="correo"
+              class="mt-1 block w-full rounded-md border border-gray-600 p-3 text-gray-900 shadow-sm"
+              placeholder="ejemplo@dominio.com"
+            >
+          </div>
+
+          <div>
+            <label class="text-sm font-medium text-yellow-400">Teléfono</label>
+            <input 
+              type="tel" 
+              [(ngModel)]="contactInfo().telefono" 
+              name="telefono"
+              class="mt-1 block w-full rounded-md border border-gray-600 p-3 text-gray-900 shadow-sm"
+              placeholder="+XX XXX XXX XXXX"
+            >
+          </div>
+        </div>
+
+        <button 
+          type="submit"
+          class="w-full rounded-md bg-yellow-400 px-4 py-3 text-sm font-semibold text-gray-800 shadow-sm hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+        >
+          Guardar Cambios
+        </button>
+      </form>
+    </section>
+
+    <!-- Sección de Redes Sociales -->
+    <section class="space-y-6 bg-transparent rounded-xl border border-gray-400 p-8">
+      <div class="space-y-2">
+        <h2 class="text-2xl font-semibold text-yellow-400">Redes Sociales</h2>
+        <p class="text-gray-200 text-sm">Gestiona los enlaces a tus redes sociales</p>
+      </div>
+
+      <div class="space-y-4">
+        <div *ngFor="let link of socialLinks(); trackBy: trackByFn">
+          <label class="text-sm font-medium text-yellow-400">{{ link.type }}</label>
+          <input 
+            type="url" 
+            [(ngModel)]="link.url" 
+            name="socialLink-{{link._id}}"
+            class="mt-1 block w-full rounded-md border border-gray-600 p-3 text-gray-900 shadow-sm"
+            placeholder="https://"
+          >
+          <button 
+            (click)="updateSocialLink(link)"
+            class="mt-2 w-full rounded-md bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-800 shadow-sm hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+          >
+            Actualizar {{ link.type }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de Información de la Página -->
+    <section class="lg:col-span-2 space-y-6 bg-transparent rounded-xl border border-gray-400 p-8">
+      <div class="space-y-2">
+        <h2 class="text-2xl font-semibold text-yellow-400">Información General</h2>
+        <p class="text-gray-200 text-sm">Actualiza la información principal de tu sitio</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <form (submit)="updatePageTitle()" class="space-y-4">
+          <div>
+            <label class="text-sm font-medium text-yellow-400">Título del Sitio</label>
+            <input 
+              type="text" 
+              [(ngModel)]="pageTitle().titulo" 
+              name="titulo"
+              class="mt-1 block w-full rounded-md border border-gray-600 p-3 text-gray-900 shadow-sm"
+              placeholder="Título principal"
+            >
+          </div>
+          <button 
+            type="submit"
+            class="w-full rounded-md bg-yellow-400 px-4 py-3 text-sm font-semibold text-gray-800 shadow-sm hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+          >
+            Actualizar Título
+          </button>
+        </form>
+
+        <form (submit)="updatePageSlogan()" class="space-y-4">
+          <div>
+            <label class="text-sm font-medium text-yellow-400">Eslogan</label>
+            <input 
+              type="text" 
+              [(ngModel)]="pageSlogan().eslogan" 
+              name="eslogan"
+              class="mt-1 block w-full rounded-md border border-gray-600 p-3 text-gray-900 shadow-sm"
+              placeholder="Eslogan del sitio"
+            >
+          </div>
+          <button 
+            type="submit"
+            class="w-full rounded-md bg-yellow-400 px-4 py-3 text-sm font-semibold text-gray-800 shadow-sm hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
+          >
+            Actualizar Eslogan
+          </button>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>

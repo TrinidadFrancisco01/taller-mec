@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Cita - Taller Mecánico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-50">
+
+<div class="max-w-lg mx-auto mt-10 p-8 bg-white rounded-lg shadow-lg border-l-8 border-yellow-400">
+    <h2 class="text-2xl font-bold text-center text-blue-600 mb-5">Agendar Cita en el Taller Mecánico</h2>
+    <form action="/submit" method="POST" class="space-y-6">
+        <div>
+            <label for="nombre" class="block text-blue-600 font-semibold">Nombre Completo:</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Ingresa tu nombre" required
+                class="w-full p-3 border border-blue-400 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        </div>
+
+        <div>
+            <label for="email" class="block text-blue-600 font-semibold">Correo Electrónico:</label>
+            <input type="email" id="email" name="email" placeholder="tucorreo@dominio.com" required
+                class="w-full p-3 border border-blue-400 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        </div>
+
+        <div>
+            <label for="telefono" class="block text-blue-600 font-semibold">Teléfono:</label>
+            <input type="tel" id="telefono" name="telefono" placeholder="Ingresa tu número de teléfono" required
+                class="w-full p-3 border border-blue-400 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        </div>
+
+        <div>
+            <label for="fecha" class="block text-blue-600 font-semibold">Fecha de la Cita:</label>
+            <input type="date" id="fecha" name="fecha" required
+                class="w-full p-3 border border-blue-400 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        </div>
+
+        <div>
+            <label for="descripcion" class="block text-blue-600 font-semibold">Descripción del Servicio:</label>
+            <textarea id="descripcion" name="descripcion" rows="4" placeholder="Describe el servicio que necesitas" required
+                class="w-full p-3 border border-blue-400 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"></textarea>
+        </div>
+
+        <input type="submit" value="Agendar Cita"
+               class="w-full bg-blue-600 text-white font-semibold py-3 rounded hover:bg-blue-500 transition duration-300 cursor-pointer">
+    </form>
+</div>
+
+</body>
+</html>

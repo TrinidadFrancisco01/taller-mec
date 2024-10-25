@@ -1,0 +1,81 @@
+<!-- Formulario de Registro (por ejemplo, registration.component.html) -->
+<form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="max-w-lg mx-auto p-8 bg-transparent border border-gray-600 rounded-lg shadow-xl">
+
+  <h2 class="text-3xl font-bold text-center mb-6 text-yellow-400">Registro</h2>
+
+  <!-- Mostrar mensaje de éxito o error con Tailwind -->
+  <div *ngIf="message" 
+       class="p-4 mb-4 rounded-lg" 
+       [ngClass]="messageType === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+    {{ message }}
+  </div>
+
+  <!-- Nombre -->
+  <div class="mb-4">
+    <label for="name" class="block text-sm font-medium text-yellow-400 dark:text-yellow-300">Nombre</label>
+    <input id="name" formControlName="name" type="text" 
+           class="mt-1 block w-full px-4 py-2 bg-transparent border border-gray-600 rounded-md shadow-sm text-gray-800 dark:text-gray-200 focus:ring-yellow-400 focus:border-yellow-400 sm:text-sm" />
+    <div *ngIf="registrationForm.get('name')?.invalid && registrationForm.get('name')?.touched" class="text-red-500 text-sm">
+      El nombre es requerido y debe tener entre 3 y 30 caracteres.
+    </div>
+  </div>
+
+  <!-- Apellido -->
+  <div class="mb-4">
+    <label for="surname" class="block text-sm font-medium text-yellow-400 dark:text-yellow-300">Apellido</label>
+    <input id="surname" formControlName="surname" type="text" 
+           class="mt-1 block w-full px-4 py-2 bg-transparent border border-gray-600 rounded-md shadow-sm text-gray-800 dark:text-gray-200 focus:ring-yellow-400 focus:border-yellow-400 sm:text-sm" />
+    <div *ngIf="registrationForm.get('surname')?.invalid && registrationForm.get('surname')?.touched" class="text-red-500 text-sm">
+      El apellido es requerido y debe tener entre 3 y 30 caracteres.
+    </div>
+  </div>
+
+  <!-- Correo electrónico -->
+  <div class="mb-4">
+    <label for="email" class="block text-sm font-medium text-yellow-400 dark:text-yellow-300">Correo Electrónico</label>
+    <input id="email" formControlName="email" type="email" 
+           class="mt-1 block w-full px-4 py-2 bg-transparent border border-gray-600 rounded-md shadow-sm text-gray-800 dark:text-gray-200 focus:ring-yellow-400 focus:border-yellow-400 sm:text-sm" />
+    <div *ngIf="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched" class="text-red-500 text-sm">
+      Correo electrónico inválido o requerido.
+    </div>
+  </div>
+
+  <!-- Teléfono -->
+  <div class="mb-4">
+    <label for="phone" class="block text-sm font-medium text-yellow-400 dark:text-yellow-300">Teléfono</label>
+    <input id="phone" formControlName="phone" type="text" 
+           class="mt-1 block w-full px-4 py-2 bg-transparent border border-gray-600 rounded-md shadow-sm text-gray-800 dark:text-gray-200 focus:ring-yellow-400 focus:border-yellow-400 sm:text-sm" />
+    <div *ngIf="registrationForm.get('phone')?.invalid && registrationForm.get('phone')?.touched" class="text-red-500 text-sm">
+      El teléfono es requerido y debe tener 10 caracteres.
+    </div>
+  </div>
+
+  <!-- Contraseña -->
+  <div class="mb-6">
+    <label for="password" class="block text-sm font-medium text-yellow-400 dark:text-yellow-300">Contraseña</label>
+    <input id="password" formControlName="password" type="password" 
+           class="mt-1 block w-full px-4 py-2 bg-transparent border border-gray-600 rounded-md shadow-sm text-gray-800 dark:text-gray-200 focus:ring-yellow-400 focus:border-yellow-400 sm:text-sm" />
+    <div *ngIf="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched" class="text-red-500 text-sm">
+      La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales.
+    </div>
+    
+    <!-- Medidor de fortaleza de contraseña -->
+    <div class="mt-2">
+      <div class="w-full bg-gray-600 rounded-full h-2.5">
+        <div class="bg-yellow-400 h-2.5 rounded-full" [style.width.%]="passwordStrength"></div>
+      </div>
+      <p class="text-sm mt-1" [ngClass]="{
+        'text-red-500': passwordStrength < 50,
+        'text-yellow-500': passwordStrength >= 50 && passwordStrength < 80,
+        'text-green-500': passwordStrength >= 80
+      }">
+        Fortaleza de la contraseña: {{ passwordStrength }}%
+      </p>
+    </div>
+  </div>
+
+  <!-- Botón de enviar -->
+  <button type="submit" class="w-full bg-yellow-400 text-gray-800 font-medium py-2 px-4 rounded-md shadow-md hover:bg-yellow-300 transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed" [disabled]="registrationForm.invalid">
+    Registrarse
+  </button>
+</form>

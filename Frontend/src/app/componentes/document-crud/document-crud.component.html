@@ -1,0 +1,112 @@
+<section class="document-crud p-6 bg-transparent text-gray-200 rounded-lg shadow-lg border border-gray-400">
+  <h2 class="text-3xl font-bold text-center mb-4 text-yellow-400">Gestión de Documentos Regulatorios</h2>
+
+  <!-- Combo box para seleccionar el tipo de documento -->
+  <div class="mb-4">
+    <label for="documentType" class="block mb-2 text-yellow-400">Tipo de Documento:</label>
+    <select id="documentType" class="p-2 border border-gray-600 rounded w-full text-gray-900" [(ngModel)]="selectedTypeValue">
+      <option *ngFor="let type of documentTypes" [value]="type">{{ type }}</option>
+    </select>
+  </div>
+
+  <!-- Formulario para agregar un nuevo documento -->
+  <div class="mb-6">
+    <h3 class="text-2xl mb-2 text-yellow-400">Agregar Nuevo Documento</h3>
+    <form (submit)="createNewDocument()">
+      <input id="title" type="text" [(ngModel)]="newDocument().title" name="title" class="p-2 border border-gray-600 rounded w-full mb-4 text-gray-900" [ngModelOptions]="{standalone: true}" placeholder="Título del documento">
+      <textarea id="description" [(ngModel)]="newDocument().description" name="description" class="p-2 border border-gray-600 rounded w-full mb-4 text-gray-900" [ngModelOptions]="{standalone: true}" placeholder="Descripción"></textarea>
+      <input id="expirationDate" type="date" [(ngModel)]="newDocument().expirationDate" name="expirationDate" class="p-2 border border-gray-600 rounded w-full mb-4 text-gray-900">    
+      <button type="submit" class="bg-yellow-400 text-gray-800 p-2 rounded hover:bg-yellow-300">Agregar Documento</button>
+    </form>
+  </div>
+
+  <!-- Modal de actualización -->
+  <div *ngIf="isModalOpen()" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <div class="mt-3">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Actualizar Documento</h3>
+        <form (submit)="$event.preventDefault(); updateDocument()">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Título</label>
+            <input 
+              type="text" 
+              [(ngModel)]="editingDocument().title" 
+              name="title"
+              class="mt-1 p-2 w-full border border-gray-600 rounded-md text-gray-900"
+            >
+          </div>
+  
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Descripción</label>
+            <textarea 
+              [(ngModel)]="editingDocument().description" 
+              name="description"
+              class="mt-1 p-2 w-full border border-gray-600 rounded-md text-gray-900"
+            ></textarea>
+          </div>
+  
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Tipo</label>
+            <select 
+              [(ngModel)]="editingDocument().documentType" 
+              name="documentType"
+              class="mt-1 p-2 w-full border border-gray-600 rounded-md text-gray-900"
+            >
+              <option *ngFor="let type of documentTypes" [value]="type">{{type}}</option>
+            </select>
+          </div>
+  
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Fecha de Expiración</label>
+            <input 
+              type="date" 
+              [(ngModel)]="editingDocument().expirationDate" 
+              name="expirationDate"
+              class="mt-1 p-2 w-full border border-gray-600 rounded-md text-gray-900"
+            >
+          </div>
+  
+          <div class="flex justify-end gap-2">
+            <button 
+              type="button"
+              (click)="closeModal()"
+              class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit"
+              class="px-4 py-2 bg-yellow-400 text-gray-800 rounded-md hover:bg-yellow-300"
+            >
+              Actualizar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Listado de documentos existentes -->
+  <div>
+    <h3 class="text-2xl mb-2 text-yellow-400">Documentos Existentes</h3>
+    <ul>
+      <li *ngFor="let doc of documents(); trackBy: trackById" class="border border-gray-400 p-4 rounded mb-2">
+        <h4 class="text-xl text-gray-900">{{ doc.title }}</h4>
+        <p class="text-sm text-gray-500">{{ doc.documentType }}</p>
+        <p class="text-gray-900">{{ doc.description }}</p>
+        <p class="text-sm text-gray-500">Fecha de creación: {{doc.createdAt}}</p>
+        <p class="text-sm text-gray-500">Versión: {{doc.version}}</p>
+        <p class="text-sm text-gray-500">Expira el: {{ doc.expirationDate }}</p>
+        <p class="text-sm text-gray-500">Estado: {{ doc.estado }}</p>
+        <button 
+          *ngIf="doc.estado === 'vigente'" 
+          class="bg-green-500 text-white p-2 rounded mt-2" 
+          (click)="openUpdateModal(doc)"
+        >
+          Actualizar
+        </button>
+        <span *ngIf="doc.estado === 'vigente'" class="text-green-600">Este documento es el vigente</span>
+      </li>
+    </ul>
+  </div>
+</section>

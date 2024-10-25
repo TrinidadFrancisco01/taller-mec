@@ -1,0 +1,60 @@
+<div class="container mx-auto">
+    <h2 class="text-xl font-bold mb-4">Incidencias</h2>
+  
+    <table class="table-auto w-full mb-8">
+      <thead>
+        <tr>
+          <th class="px-4 py-2">ID</th>
+          <th class="px-4 py-2">Descripción</th>
+          <th class="px-4 py-2">Estatus</th>
+          <th class="px-4 py-2">Fecha</th>
+          <th class="px-4 py-2">Usuario</th>
+          <th class="px-4 py-2">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let incident of incidents">
+          <td class="border px-4 py-2">{{ incident.id }}</td>
+          <td class="border px-4 py-2">{{ incident.description }}</td>
+          <td class="border px-4 py-2">{{ incident.status }}</td>
+          <td class="border px-4 py-2">{{ incident.date | date }}</td>
+          <td class="border px-4 py-2">{{ getUserName(incident.userId) }}</td> <!-- Mostramos el nombre del usuario -->
+          <td class="border px-4 py-2">
+            <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700" (click)="blockUser(incident.id)">
+              Bloquear
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <h2 class="text-xl font-bold mb-4">Incidencias Bloqueadas</h2>
+  
+    <table class="table-auto w-full">
+      <thead>
+        <tr>
+          <th class="px-4 py-2">ID</th>
+          <th class="px-4 py-2">Descripción</th>
+          <th class="px-4 py-2">Estatus</th>
+          <th class="px-4 py-2">Fecha</th>
+          <th class="px-4 py-2">Usuario</th>
+          <th class="px-4 py-2">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let blocked of blockedIncidents">
+          <td class="border px-4 py-2">{{ blocked.id }}</td>
+          <td class="border px-4 py-2">{{ blocked.description }}</td>
+          <td class="border px-4 py-2">{{ blocked.status }}</td>
+          <td class="border px-4 py-2">{{ blocked.date | date }}</td>
+          <td class="border px-4 py-2">{{ getUserName(blocked.userId) }}</td> <!-- Mostramos el nombre del usuario -->
+          <td class="border px-4 py-2">
+            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700" (click)="unblockUser(blocked.id)">
+              Desbloquear
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

@@ -1,0 +1,50 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="max-w-md mx-auto p-8 bg-transparent text-gray-200 shadow-lg rounded-lg border border-gray-400 space-y-6">
+  <!-- Email Input -->
+  <div>
+    <label for="email" class="block text-sm font-medium text-yellow-400">Email</label>
+    <input id="email" formControlName="email" type="email" required
+      class="mt-1 block w-full px-4 py-2 bg-gray-200 text-gray-900 border border-gray-400 rounded-md shadow-sm focus:ring-yellow-400 focus:border-yellow-400 sm:text-sm"/>
+  </div>
+
+  <!-- Password Input -->
+  <div>
+    <label for="password" class="block text-sm font-medium text-yellow-400">Password</label>
+    <input id="password" formControlName="password" type="password" required
+      class="mt-1 block w-full px-4 py-2 bg-gray-200 text-gray-900 border border-gray-400 rounded-md shadow-sm focus:ring-yellow-400 focus:border-yellow-400 sm:text-sm"/>
+  </div>
+
+  <!-- Recaptcha -->
+  <div>
+    <ngx-recaptcha2 
+      [siteKey]="siteKey" 
+      (success)="handleCaptchaSuccess($event)" 
+      (error)="handleCaptchaError($event)">
+    </ngx-recaptcha2>
+  </div>
+
+  <!-- Forgot Password Link -->
+  <div class="text-right">
+    <a [routerLink]="['/recuperar']" class="text-sm text-yellow-400 hover:underline">
+      ¿Has olvidado la contraseña?
+    </a>
+  </div>
+
+  <!-- Mensaje de intentos restantes -->
+  <div *ngIf="attemptCount > 0 && !isAccountLocked" class="text-red-500 text-sm">
+    Intentos fallidos: {{ attemptCount }} de {{ maxAttempts }}.
+  </div>
+
+  <!-- Cuenta bloqueada -->
+  <div *ngIf="isAccountLocked" class="text-red-600 text-sm">
+    Tu cuenta ha sido bloqueada después de {{ maxAttempts }} intentos fallidos. Contacta al soporte.
+  </div>
+
+  <!-- Submit Button -->
+  <button type="submit" [disabled]="loginForm.invalid || isAccountLocked"
+    class="w-full bg-yellow-400 text-gray-800 font-semibold py-2 rounded-md shadow-md hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition duration-300 ease-in-out disabled:opacity-50">
+    Log in
+  </button>
+
+  <!-- Error Message -->
+  <p *ngIf="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
+</form>
