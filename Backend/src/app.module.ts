@@ -13,6 +13,8 @@ import { SloganModule } from './profilecompany/slogan/slogan.module';
 import { SocialnetworksModule } from './profilecompany/socialnetworks/socialnetworks.module';
 import { TitlepageModule } from './profilecompany/titlepage/titlepage.module';
 import { IncidentmonitorModule } from './incidentmonitor/incidentmonitor.module';
+import { ConfigureModule } from './configure/configure.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [MongooseModule.forRoot('mongodb+srv://trinidad:trinidad2004@cluster0.ivkew.mongodb.net/Taller'),
@@ -25,6 +27,8 @@ import { IncidentmonitorModule } from './incidentmonitor/incidentmonitor.module'
     SocialnetworksModule,
     TitlepageModule,
     IncidentmonitorModule,
+    ConfigureModule,
+    ImagesModule,
     ],
   controllers: [AppController, HolaController,],
   providers: [AppService],
