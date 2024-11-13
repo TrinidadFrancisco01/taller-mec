@@ -1,95 +1,89 @@
-import { Component, signal, effect } from '@angular/core';
+import { Component, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { LoginComponent } from './componentes/login/login.component';
-import { RegistroComponent } from './componentes/registro/registro.component';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { AdminHeaderComponent } from './componentes/admin/admin-header/admin-header.component';
+import { HeaderService } from './componentes/admin/admin-header/header.service';
+import { ThemeService } from './theme.service';
+import { AuthService } from './componentes/public/login/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterModule, LoginComponent, RegistroComponent, HttpClientModule],
+  imports: [CommonModule, RouterModule, HttpClientModule, AdminHeaderComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   readonly theme = signal('light-theme');
   contactInfo = signal({ direccion: '', correo: '', telefono: '' });
-  pageTitle = signal(''); // Agregar señal para el título
-  pageSlogan = signal(''); // Agregar señal para el eslogan
-  socialLinks = signal<any[]>([]); // Cambiar a 'any' en lugar de 'SocialNetwork'
+  pageTitle = signal('');
+  pageSlogan = signal('');
+  socialLinks = signal<{ type: string, url: string }[]>([]);
 
-
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    public headerService: HeaderService,
+    public themeService: ThemeService,
+    private authService: AuthService
+  ) {
+    // Configura un efecto para detectar cambios en el tipo de encabezado
     effect(() => {
-      document.body.className = this.theme();
+      console.log('Tipo de header:', this.headerService.getHeaderType());
     });
-    
-    this.loadContactInfo();
-    this.loadPageTitle(); // Cargar el título al iniciar
-    this.loadPageSlogan(); // Cargar el eslogan al iniciar
-    this.loadSocialLinks(); // Cargar enlaces de redes sociales al iniciar
-
   }
+
+  ngOnInit() {
+    // Verifica el estado de autenticación al iniciar
+    this.authService.checkAuthStatus();
+
+    // Cargar la información inicial
+    this.loadContactInfo();
+    this.loadPageTitle();
+    this.loadPageSlogan();
+    this.loadSocialLinks();
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
+  }
+
+  loadContactInfo() {
+    this.http.get<any>('https://taller-backend-two.vercel.app/contactdata/recent').subscribe({
+      next: data => this.contactInfo.set(data),
+      error: err => console.error('Error al cargar datos de contacto', err),
+    });
+  }
+
+  loadPageTitle() {
+    this.http.get<{ title: string }>('https://taller-backend-two.vercel.app/titlepage/recent').subscribe({
+      next: data => data?.title ? this.pageTitle.set(data.title) : console.error('Título no encontrado'),
+      error: err => console.error('Error al cargar el título de la página', err),
+    });
+  }
+
+  loadPageSlogan() {
+    this.http.get<{ slogan: string }>('https://taller-backend-two.vercel.app/slogan/recent').subscribe({
+      next: data => data?.slogan ? this.pageSlogan.set(data.slogan) : console.error('Eslogan no encontrado'),
+      error: err => console.error('Error al cargar el eslogan', err),
+    });
+  }
+
   loadSocialLinks() {
     const platforms = ['Facebook', 'Twitter', 'Instagram'];
     platforms.forEach(platform => this.loadSocialLink(platform));
   }
 
   loadSocialLink(platform: string) {
-    this.http.get<any>(`https://taller-backend-two.vercel.app/socialnetworks/most-recent/${platform}`).subscribe({
-        next: (data) => {
-            this.socialLinks.update(existingLinks => {
-                const index = existingLinks.findIndex(link => link.type === platform);
-                if (index !== -1) {
-                    existingLinks[index].url = data.url; // Actualiza el enlace existente
-                } else {
-                    existingLinks.push(data); // Agrega un nuevo enlace
-                }
-                return existingLinks;
-            });
-        },
-        error: (err) => console.error(`Error al cargar las redes sociales de ${platform}:`, err),
-    });
-}
-
-
-  toggleTheme() {
-    this.theme.update(current => current === 'light-theme' ? 'dark-theme' : 'light-theme');
-  }
-
-  loadContactInfo() {
-    this.http.get<any>('https://taller-backend-two.vercel.app/contactdata/recent').subscribe({
-      next: (data) => {
-        this.contactInfo.set(data);
+    this.http.get<{ type: string, url: string }>(`https://taller-backend-two.vercel.app/socialnetworks/most-recent/${platform}`).subscribe({
+      next: data => {
+        this.socialLinks.update(existingLinks => {
+          const index = existingLinks.findIndex(link => link.type === platform);
+          index !== -1 ? (existingLinks[index].url = data.url) : existingLinks.push(data);
+          return existingLinks;
+        });
       },
-      error: (err) => console.error('Error al cargar datos de contacto', err),
-    });
-  }
-
-  loadPageTitle() {
-    this.http.get<{ title: string }>('https://taller-backend-two.vercel.app/titlepage/recent').subscribe({
-      next: (data) => {
-        if (data && data.title) {
-          this.pageTitle.set(data.title); // Actualizar el título
-        } else {
-          console.error('No se encontró el título en los datos');
-        }
-      },
-      error: (err) => console.error('Error al cargar el título de la página:', err),
-    });
-  }
-
-  loadPageSlogan() {
-    this.http.get<{ slogan: string }>('https://taller-backend-two.vercel.app/slogan/recent').subscribe({
-      next: (data) => {
-        if (data && data.slogan) {
-          this.pageSlogan.set(data.slogan); // Actualizar el eslogan
-        } else {
-          console.error('No se encontró el eslogan en los datos');
-        }
-      },
-      error: (err) => console.error('Error al cargar el eslogan de la página:', err),
+      error: err => console.error(`Error al cargar ${platform}`, err),
     });
   }
 
@@ -105,5 +99,9 @@ export class AppComponent {
         return '';
     }
   }
-  
+
+  // Define la función trackByType
+  trackByType(index: number, item: { type: string, url: string }): string {
+    return item.type;
+  }
 }

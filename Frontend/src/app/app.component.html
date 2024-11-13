@@ -1,84 +1,63 @@
-<header class="fixed top-0 left-0 w-full p-4 shadow-lg z-50 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-  <div class="container mx-auto flex justify-between items-center">
-    <a href="/" class="flex items-center space-x-2">
-      <img src="https://i.postimg.cc/Fz3m2dVm/logo.png" alt="Logo del Taller" class="h-10">
-      <span class="font-bold text-xl text-gray-900 dark:text-yellow-300">{{ pageTitle() }}</span> <!-- Cambiar título -->
-    </a>
-
-    <span class="text-lg text-gray-800 dark:text-gray-300">
-      {{ pageSlogan() }} <!-- Mostrar eslogan aquí -->
-    </span>
-
-    <nav>
-      <ul class="flex space-x-6 text-lg">
-        <li>
-          <a href="/document-crud" class="text-gray-800 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400 transition duration-300 ease-in-out">Documentos Regulatorios</a>
-        </li>
-        <li>
-          <a href="/crud_empresa" class="text-gray-800 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400 transition duration-300 ease-in-out">Información de Contacto</a>
-        </li>
-        <li>
-          <a href="/inidencias" class="text-gray-800 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400 transition duration-300 ease-in-out">Incidencias</a>
-        </li>
-        <li>
-          <a href="/login" class="text-gray-800 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400 transition duration-300 ease-in-out">Iniciar sesión</a>
-        </li>
-        <li>
-          <a href="/registro" class="text-gray-800 dark:text-gray-300 hover:text-yellow-600 dark:hover:text-yellow-400 transition duration-300 ease-in-out">Registrarse</a>
-        </li>
-      </ul>
-    </nav>
-
-    <button (click)="toggleTheme()" class="bg-yellow-500 dark:bg-blue-600 text-white px-4 py-2 rounded hover:bg-yellow-400 dark:hover:bg-blue-500 transition duration-300">
-      Cambiar Tema
-    </button>
-  </div>
+<header *ngIf="headerService.headerType() === 'admin'; else defaultHeader">
+  <app-admin-header></app-admin-header>
 </header>
 
-<!-- Espaciado adicional para que el contenido no quede oculto detrás del header fijo -->
-<div class="pt-20"></div>
+<ng-template #defaultHeader>
+<header class="fixed top-0 left-0 w-full p-4 shadow-lg z-50 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+  <div class="container mx-auto flex flex-wrap justify-between items-center">
+    <a routerLink="/" class="flex items-center space-x-2">
+      <img src="https://i.postimg.cc/Fz3m2dVm/logo.png" alt="Logo del Taller" class="h-8">
+      <span class="font-bold text-xl light-title dark:dark-title">{{ pageTitle() }}</span>
+    </a>
+    <span class="text-lg light-slogan dark:dark-slogan hidden md:block">{{ pageSlogan() }}</span>
+    <nav class="flex items-center mt-2 md:mt-0">
+      <ul class="flex space-x-4 text-lg mr-4">
+        <li><a routerLink="/login" class="text-gray-800 dark:text-gray-300 hover:text-yellow-600">Iniciar sesión</a></li>
+        <li><a routerLink="/registro" class="text-gray-800 dark:text-gray-300 hover:text-yellow-600">Registrarse</a></li>
+      </ul>
+      <button (click)="toggleTheme()" class="bg-yellow-500 dark:bg-blue-600 text-white px-3 py-1 rounded hover:bg-yellow-600 dark:hover:bg-blue-700 transition-colors">
+        Cambiar Tema
+      </button>
+    </nav>
+  </div>
+</header>
+</ng-template>
 
-
-
-
-<div class="min-h-screen">
+<!-- Contenido -->
+<div class="mt-23 pt-28 md:pt-20 min-h-screen">
   <router-outlet></router-outlet>
 </div>
 
-
-
-<footer class="bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-8 mt-12 transition-colors duration-300">
-  <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 animate-fade-in-up">
+<!-- Footer -->
+<footer class="bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-8 mt-12">
+  <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
     <div>
       <h3 class="text-lg font-bold mb-2 text-yellow-500">Navegación</h3>
       <ul class="space-y-2">
-        <li><a href="/politica" class="hover:text-yellow-600 dark:hover:text-yellow-400">Política de Privacidad</a></li>
-        <li><a href="/terminos" class="hover:text-yellow-600 dark:hover:text-yellow-400">Términos y Condiciones</a></li>
-        <li><a href="/disclaimer" class="hover:text-yellow-600 dark:hover:text-yellow-400">Deslinde Legal</a></li>
+        <li><a routerLink="/politica" class="hover:text-yellow-600">Política de Privacidad</a></li>
+        <li><a routerLink="/terminos" class="hover:text-yellow-600">Términos y Condiciones</a></li>
+        <li><a routerLink="/disclaimer" class="hover:text-yellow-600">Deslinde Legal</a></li>
       </ul>
     </div>
-
     <div>
       <h3 class="text-lg font-bold mb-2 text-yellow-500">Contacto</h3>
       <ul class="space-y-2">
-        <li>Email: <a href="mailto:{{ contactInfo().correo }}" class="hover:text-yellow-600 dark:hover:text-yellow-400">{{ contactInfo().correo }}</a></li>
-        <li>Teléfono: <a href="tel:+52{{ contactInfo().telefono }}" class="hover:text-yellow-600 dark:hover:text-yellow-400">{{ contactInfo().telefono }}</a></li>
+        <li>Email: <a href="mailto:{{ contactInfo().correo }}" class="hover:text-yellow-600">{{ contactInfo().correo }}</a></li>
+        <li>Teléfono: <a href="tel:+52{{ contactInfo().telefono }}" class="hover:text-yellow-600">{{ contactInfo().telefono }}</a></li>
         <li>Dirección: {{ contactInfo().direccion }}</li>
       </ul>
     </div>
-
     <div>
       <h3 class="text-lg font-bold mb-2 text-yellow-500">Síguenos</h3>
       <ul class="flex space-x-6">
-        <li *ngFor="let link of socialLinks()">
-          <a [href]="link.url" target="_blank" class="hover:text-yellow-600 dark:hover:text-yellow-400">
+        <li *ngFor="let link of socialLinks(); trackBy: trackByType">
+          <a [href]="link.url" target="_blank">
             <img [src]="getIcon(link.type)" alt="{{ link.type }}" class="h-6">
           </a>
         </li>
       </ul>
     </div>
   </div>
-
   <div class="mt-8 text-center text-gray-600 dark:text-gray-400">
     &copy; 2024 Taller Automotriz Heber. Todos los derechos reservados.
   </div>

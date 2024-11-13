@@ -1,0 +1,69 @@
+<!-- Componente principal (por ejemplo, home.component.html) -->
+<div class="min-h-screen text-gray-200">
+
+  <!-- Sección de Imagen Principal -->
+  <section class="relative">
+    <img src="https://cdn.buttercms.com/7EOkwAtnT1GMDGiAAang" alt="Imagen de Bienvenida" class="w-full h-96 object-cover opacity-80">
+    <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center text-center p-6">
+      <h2 class="text-4xl font-bold mb-2 text-yellow-400 animate-fade-in">Bienvenido a Taller Automotriz Heber</h2>
+    </div>
+  </section>
+
+  <!-- Sección de Servicios del Taller -->
+  <section class="py-16">
+    <h2 class="text-3xl font-bold text-center text-blue-400 mb-10">Nuestros Servicios</h2>
+
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-4">
+      <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+        <img src="https://autoserviciomitsubishi.com/wp-content/uploads/2023/11/img-lo-que-incluye-el-mantenimiento-general-de-un-carro-1.jpg" alt="Mantenimiento General" class="w-full h-48 object-cover mb-4 rounded-md">
+        <div class="service-content">
+          <h3 class="text-2xl font-bold text-yellow-400 mb-2">Mantenimiento General</h3>
+          <p>Ofrecemos servicios completos de mantenimiento para que tu vehículo siempre esté en óptimas condiciones.</p>
+        </div>
+      </div>
+
+      <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+        <img src="https://autosoporte.com/wp-content/uploads/2021/03/car-electrical-system-repair-1.jpg" alt="Diagnóstico Electrónico" class="w-full h-48 object-cover mb-4 rounded-md">
+        <div class="service-content">
+          <h3 class="text-2xl font-bold text-yellow-400 mb-2">Diagnóstico Electrónico</h3>
+          <p>Contamos con equipos de última tecnología para realizar diagnósticos precisos y eficientes.</p>
+        </div>
+      </div>
+
+      <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYIf5Y0QzafCOTkeiFsyY4H6fP2QckWnLOHg&s" alt="Reparación de Motor" class="w-full h-48 object-cover mb-4 rounded-md">
+        <div class="service-content">
+          <h3 class="text-2xl font-bold text-yellow-400 mb-2">Reparación de Motor</h3>
+          <p>Realizamos reparaciones completas y parciales de motores con garantías de calidad.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-10">
+      <a href="#" class="bg-yellow-400 text-gray-900 font-bold py-3 px-6 rounded-full hover:bg-yellow-300 transition">Ver Todos los Servicios</a>
+    </div>
+  </section>
+
+  <!-- Sección de Testimonios -->
+  <section class="py-16">
+    <h2 class="text-3xl font-bold text-center text-yellow-400 mb-10">Lo Que Dicen Nuestros Clientes</h2>
+
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
+      <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <p class="text-gray-300 mb-4">"Excelente servicio, repararon mi coche en tiempo récord y a un precio justo."</p>
+        <h4 class="font-bold text-yellow-400">Juan Pérez</h4>
+      </div>
+
+      <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <p class="text-gray-300 mb-4">"La atención al cliente es excelente. Mi auto quedó como nuevo."</p>
+        <h4 class="font-bold text-yellow-400">María López</h4>
+      </div>
+
+      <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
+        <p class="text-gray-300 mb-4">"Muy profesionales, el diagnóstico fue preciso y la reparación rápida."</p>
+        <h4 class="font-bold text-yellow-400">Carlos Sánchez</h4>
+      </div>
+    </div>
+  </section>
+
+</div>

@@ -25,22 +25,23 @@
 }
 
 /* Tema claro */
+/* Tema claro */
 .light-theme {
-  @apply bg-white text-gray-900; /* Fondo claro y texto oscuro */
+  @apply bg-gray-100 text-gray-700; /* Fondo gris claro en lugar de blanco puro */
 }
 
 .light-theme header {
-  @apply bg-gray-100; /* Fondo del header claro */
+  @apply bg-gray-200; /* Fondo del header un poco más oscuro */
 }
 
 .light-theme footer {
-  @apply bg-gray-100; /* Fondo del footer claro */
+  @apply bg-gray-200; /* Fondo del footer ligeramente oscuro */
 }
 
 .light-theme a {
-  @apply text-blue-500 hover:text-blue-700; /* Color de los enlaces en tema claro */
+  @apply text-blue-600 hover:text-blue-800; /* Color de enlaces */
 }
 
 .light-theme h1, .light-theme h2, .light-theme h3, .light-theme h4, .light-theme p {
-  @apply text-gray-900; /* Color de texto para encabezados y párrafos */
+  @apply text-gray-800; /* Texto en gris oscuro */
 }

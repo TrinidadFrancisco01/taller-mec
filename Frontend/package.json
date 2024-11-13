@@ -21,6 +21,7 @@
     "@angular/router": "^18.2.8",
     "@types/crypto-js": "^4.2.2",
     "crypto-js": "^4.2.0",
+    "express": "^4.21.1",
     "flowbite": "^2.5.2",
     "leaflet": "^1.9.4",
     "ngx-captcha": "^13.0.0",

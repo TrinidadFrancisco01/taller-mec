@@ -1,0 +1,9 @@
+<section class="disclaimer p-6 bg-transparent text-gray-200 rounded-lg shadow-lg border border-gray-400">
+  <h2 class="text-3xl font-bold text-center mb-4 text-yellow-400">Deslinde Legal</h2>
+
+  @if (description()) {
+    <p class="text-gray-900 mb-4">{{ description() }}</p>
+  } @else {
+    <p class="text-center text-yellow-400">Cargando el deslinde legal...</p>
+  }
+</section>
