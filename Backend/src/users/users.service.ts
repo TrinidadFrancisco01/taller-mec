@@ -15,6 +15,7 @@ import * as nodemailer from 'nodemailer';
 import { PasswordUpdate } from './dto/update-user.dto';
 import * as jwt from 'jsonwebtoken'; // Importa jsonwebtoken
 import { Response, Request } from 'express';
+import { Configure, ConfigureDocument } from 'src/configure/schema/configure-schema';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +24,7 @@ export class UsersService {
     private verificationCodes: { [email: string]: { code: string, expiration: Date } } = {};
     private emailStore: { [key: string]: { email: string; expiration: Date } } = {}; // Almacenar el email y su expiración
 
-    constructor(@InjectModel(User.name) private UsersModule: Model<User>, @InjectModel(Incident.name) private IncidentModule: Model<Incident>) { }
+    constructor(@InjectModel(User.name) private UsersModule: Model<User>, @InjectModel(Incident.name) private IncidentModule: Model<Incident>, @InjectModel(Configure.name) private configureModel: Model<ConfigureDocument>) { }
 
     // Función para obtener el hash SHA-1 de una contraseña
     private sha1(password: string): string {
@@ -65,6 +66,13 @@ export class UsersService {
 
     // Función para enviar un correo con el código de verificación
     private async sendVerificationEmail(email: string, code: string, html: string): Promise<void> {
+        // Recuperar la configuración de intentos permitidos desde la base de datos
+        const config = await this.configureModel.findOne(); // Suponiendo que solo hay un documento de configuración
+        const emailTitle = config?.verificationEmailTitle;
+        const emailGreeting = config?.verificationEmailGreeting;
+        const emailFarewell = config?.verificationEmailFarewell;
+
+
         const transporter = nodemailer.createTransport({
             service: 'gmail', // Cambia el servicio según tu proveedor de correo
             auth: {
@@ -112,10 +120,11 @@ export class UsersService {
                 </head>
                 <body>
                     <div class="container">
-                        <h2>Código de Recuperación de Contraseña</h2>
+                        <h2>${emailTitle}</h2>
+                        <p>${emailGreeting}</p>
                         <p>Tu código de recuperación es: <span class="code">${code}</span>.</p>
                         <p>Este código expirará en 10 minutos.</p>
-                        <p>Si no solicitaste este código, puedes ignorar este correo.</p>
+                        <p>${emailFarewell}</p>
                     </div>
                 </body>
                 </html>`,
@@ -288,6 +297,13 @@ export class UsersService {
     }
 
     async loginUser(login: LoginUserDto, @Res() res: Response) {
+        // Recuperar la configuración de intentos permitidos desde la base de datos
+        const config = await this.configureModel.findOne(); // Suponiendo que solo hay un documento de configuración
+        const maxAttempts = config?.intent || 5; // Si no existe el valor en la BD, utiliza 3 como valor predeterminado
+        const tokeLifetime = config?.tokenLifetime;
+
+
+
         try {
             const { email, password } = login;
             console.log(`Intantando iniciar sesion para: ${email}`);
@@ -322,7 +338,7 @@ export class UsersService {
             // Verificar la contraseña
             const isPasswordMatching = await bcrypt.compare(password, user.password);
             if (!isPasswordMatching) {
-                if (this.loginAttempts[email] < 5) {
+                if (this.loginAttempts[email] < maxAttempts) {
                     this.loginAttempts[email] += 1;
                     console.log(`Contraseña incorrecta para el usuario: ${email}, intentos:${this.loginAttempts[email]}`);
                     // Registrar el intento fallido en la colección de incidencias
@@ -376,7 +392,7 @@ export class UsersService {
             res.cookie('token', token, {
                 httpOnly: true,  // Para evitar que el frontend pueda acceder a la cookie
                 secure: true,    // Asegúrate de usarlo en producción con HTTPS
-                maxAge: 3600000  // Expira en 1 hora (en milisegundos)
+                maxAge: tokeLifetime  // Expira en 1 hora (en milisegundos)
             });
 
 

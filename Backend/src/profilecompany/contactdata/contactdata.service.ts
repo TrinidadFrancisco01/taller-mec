@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ContactData, ContactDataDocument } from './schema/contact-data-schema';
 import { Model } from 'mongoose';
 import { CreateContactDataDto } from './dto/create-contact-data.dto';
-import { create } from 'domain';
 
 @Injectable()
 export class ContactdataService {

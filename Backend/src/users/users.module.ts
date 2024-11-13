@@ -5,6 +5,7 @@ import { Mongoose } from 'mongoose';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user-schema';
 import { Incident, IncidentSchema } from './schemas/incident-schema';
+import { Configure, ConfigureSchema } from 'src/configure/schema/configure-schema';
 @Module({
   imports: [MongooseModule.forFeature([
     {
@@ -15,6 +16,10 @@ import { Incident, IncidentSchema } from './schemas/incident-schema';
     {
       name: Incident.name,  // Agrega el modelo de incidencias
       schema: IncidentSchema,
+    },
+    {
+      name: Configure.name,
+      schema: ConfigureSchema
     },
   ])],
   providers: [UsersService],

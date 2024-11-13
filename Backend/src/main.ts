@@ -4,22 +4,22 @@ import * as cookieParser from 'cookie-parser';
 import * as dotenv from 'dotenv'; // Asegúrate de usar el asterisco aquí
 
 async function bootstrap() {
-
   
   dotenv.config(); // Cargar las variables de entorno
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
   app.useLogger(['error', 'warn', 'log', 'debug', 'verbose']); // Habilita todos los niveles de log
-  // Habilita CORS especificando solo el origen del frontend y evitando redirecciones
+
+  // Habilita CORS para permitir cualquier origen
   app.enableCors({
-    origin: 'https://tallerheber.losdela.com',  // Especifica el dominio del frontend
+    origin: ['https://tallerheber.losdela.com'], // Permite solicitudes solo desde este origen
     methods: 'OPTIONS,GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,  // Si usas cookies o autenticación, mantenlo en true
+    credentials: true, // Si usas cookies o autenticación
   });
+  
 
   const port = process.env.PORT || 3000;
-  // Usar el middleware de cookie-parser
-
+  
   await app.listen(port);
 
   const serverUrl = await app.getUrl();
