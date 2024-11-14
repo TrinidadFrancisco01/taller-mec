@@ -16,6 +16,7 @@ import { PasswordUpdate } from './dto/update-user.dto';
 import * as jwt from 'jsonwebtoken'; // Importa jsonwebtoken
 import { Response, Request } from 'express';
 import { Configure, ConfigureDocument } from 'src/configure/schema/configure-schema';
+import { ImagesModule } from 'src/images/images.module';
 
 @Injectable()
 export class UsersService {
@@ -24,7 +25,11 @@ export class UsersService {
     private verificationCodes: { [email: string]: { code: string, expiration: Date } } = {};
     private emailStore: { [key: string]: { email: string; expiration: Date } } = {}; // Almacenar el email y su expiración
 
-    constructor(@InjectModel(User.name) private UsersModule: Model<User>, @InjectModel(Incident.name) private IncidentModule: Model<Incident>, @InjectModel(Configure.name) private configureModel: Model<ConfigureDocument>) { }
+    constructor(@InjectModel(User.name) private UsersModule: Model<User>,
+        @InjectModel(Incident.name) private IncidentModule: Model<Incident>,
+        @InjectModel(Configure.name) private configureModel: Model<ConfigureDocument>,
+
+    ) { }
 
     // Función para obtener el hash SHA-1 de una contraseña
     private sha1(password: string): string {
@@ -73,6 +78,7 @@ export class UsersService {
         const emailFarewell = config?.verificationEmailFarewell;
 
 
+
         const transporter = nodemailer.createTransport({
             service: 'gmail', // Cambia el servicio según tu proveedor de correo
             auth: {
@@ -86,50 +92,63 @@ export class UsersService {
             to: email,
             subject: 'Código de recuperación de contraseña',
             html: `<!DOCTYPE html>
-                <html lang="es">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Código de Recuperación de Contraseña</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            background-color: #f7f7f7;
-                            margin: 0;
-                            padding: 20px;
-                        }
-                        .container {
-                            max-width: 600px;
-                            margin: 0 auto;
-                            padding: 20px;
-                            border: 1px solid #0056b3;
-                            border-radius: 8px;
-                            background-color: #ffffff;
-                        }
-                        h2 {
-                            color: #0056b3;
-                        }
-                        p {
-                            color: #333;
-                        }
-                        .code {
-                            color: #e0a800; /* Color amarillo más oscuro */
-                            font-weight: bold;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <h2>${emailTitle}</h2>
-                        <p>${emailGreeting}</p>
-                        <p>Tu código de recuperación es: <span class="code">${code}</span>.</p>
-                        <p>Este código expirará en 10 minutos.</p>
-                        <p>${emailFarewell}</p>
-                    </div>
-                </body>
-                </html>`,
-
+              <html lang="es">
+              <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>Código de Recuperación de Contraseña</title>
+                  <style>
+                      body {
+                          font-family: Arial, sans-serif;
+                          background-color: #f7f7f7;
+                          margin: 0;
+                          padding: 20px;
+                      }
+                      .container {
+                          max-width: 600px;
+                          margin: 0 auto;
+                          padding: 20px;
+                          border: 1px solid #0056b3;
+                          border-radius: 8px;
+                          background-color: #ffffff;
+                      }
+                      h2 {
+                          color: #0056b3;
+                      }
+                      p {
+                          color: #333;
+                      }
+                      .code {
+                          color: #e0a800; /* Color amarillo más oscuro */
+                          font-weight: bold;
+                      }
+                      .image-container {
+                          text-align: center;
+                          margin-bottom: 20px;
+                      }
+                      /* Ajusta el tamaño de la imagen aquí */
+                      img {
+                          width: 150px;  /* Ajusta el tamaño deseado */
+                          height: auto;  /* Mantiene la proporción de la imagen */
+                          max-width: 100%; /* Asegura que la imagen no se salga del contenedor */
+                      }
+                  </style>
+              </head>
+              <body>
+                  <div class="container">
+                      <div class="image-container">
+                          <img src="https://taller-backend-two.vercel.app/images/latest" alt="Logo" />
+                      </div>
+                      <h2>${emailTitle}</h2>
+                      <p>${emailGreeting}</p>
+                      <p>Tu código de recuperación es: <span class="code">${code}</span>.</p>
+                      <p>Este código expirará en 10 minutos.</p>
+                      <p>${emailFarewell}</p>
+                  </div>
+              </body>
+              </html>`,
         };
+
 
         try {
             await transporter.sendMail(mailOptions);

@@ -12,8 +12,16 @@ export class IncidentmonitorService {
         @InjectModel(Incident.name) private IncidentModule: Model<Incident>) { }
 
     async getUsers(): Promise<User[]> {
-        return this.UsersModule.find().exec();
+        return this.UsersModule.find({ role: 'client' }).exec();
     }
+
+    async getBlockedClients(): Promise<User[]> {
+        return this.UsersModule.find({ role: 'client', bloked: true }).exec();
+    }
+    
+    async getActiveClients(): Promise<User[]> {
+        return this.UsersModule.find({ role: 'client', bloked: false }).exec();
+    }    
 
     async getIncident(): Promise<Incident[]> {
         return this.IncidentModule.find().exec();
@@ -50,8 +58,4 @@ export class IncidentmonitorService {
 
         return user; // Retorna el usuario actualizado
     }
-
-
-
-
 }
