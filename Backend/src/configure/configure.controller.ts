@@ -7,7 +7,7 @@ import { Configure } from './schema/configure-schema';
 export class ConfigureController {
     constructor(private configureService: ConfigureService) { }
 
-    @Post()
+   /* @Post()
     createIntent(@Body() configure: CreateConfigureDto) {
         // Convertir minutos a segundos para tokenLifetime
         const configureData = {
@@ -17,7 +17,7 @@ export class ConfigureController {
 
         return this.configureService.createConfig(configureData);
     }
-
+*/
     @Get()
     async getMostRecentConfig(): Promise<Configure> {
         const config = await this.configureService.getMostRecentConfig();

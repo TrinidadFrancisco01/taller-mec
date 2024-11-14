@@ -3,25 +3,26 @@
 </header>
 
 <ng-template #defaultHeader>
-<header class="fixed top-0 left-0 w-full p-4 shadow-lg z-50 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-  <div class="container mx-auto flex flex-wrap justify-between items-center">
-    <a routerLink="/" class="flex items-center space-x-2">
-      <img src="https://i.postimg.cc/Fz3m2dVm/logo.png" alt="Logo del Taller" class="h-8">
-      <span class="font-bold text-xl light-title dark:dark-title">{{ pageTitle() }}</span>
-    </a>
-    <span class="text-lg light-slogan dark:dark-slogan hidden md:block">{{ pageSlogan() }}</span>
-    <nav class="flex items-center mt-2 md:mt-0">
-      <ul class="flex space-x-4 text-lg mr-4">
-        <li><a routerLink="/login" class="text-gray-800 dark:text-gray-300 hover:text-yellow-600">Iniciar sesión</a></li>
-        <li><a routerLink="/registro" class="text-gray-800 dark:text-gray-300 hover:text-yellow-600">Registrarse</a></li>
-      </ul>
-      <button (click)="toggleTheme()" class="bg-yellow-500 dark:bg-blue-600 text-white px-3 py-1 rounded hover:bg-yellow-600 dark:hover:bg-blue-700 transition-colors">
-        Cambiar Tema
-      </button>
-    </nav>
-  </div>
-</header>
-</ng-template>
+  <header class="fixed top-0 left-0 w-full p-4 shadow-lg z-50 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+    <div class="container mx-auto flex flex-wrap justify-between items-center">
+      <a routerLink="/" class="flex items-center space-x-2">
+        <img *ngIf="logoUrl" [src]="logoUrl" alt="Logo del Taller" class="h-8">
+        <span class="font-bold text-xl light-title dark:dark-title">{{ pageTitle() }}</span>
+      </a>
+      <span class="text-lg light-slogan dark:dark-slogan hidden md:block">{{ pageSlogan() }}</span>
+      <nav class="flex items-center mt-2 md:mt-0">
+        <ul class="flex space-x-4 text-lg mr-4">
+          <li><a routerLink="/login" class="text-gray-800 dark:text-gray-300 hover:text-yellow-600">Iniciar sesión</a></li>
+          <li><a routerLink="/registro" class="text-gray-800 dark:text-gray-300 hover:text-yellow-600">Registrarse</a></li>
+        </ul>
+        <button (click)="toggleTheme()" class="bg-yellow-500 dark:bg-blue-600 text-white px-3 py-1 rounded hover:bg-yellow-600 dark:hover:bg-blue-700 transition-colors">
+          Cambiar Tema
+        </button>
+      </nav>
+    </div>
+  </header>
+  </ng-template>
+  
 
 <!-- Contenido -->
 <div class="mt-23 pt-28 md:pt-20 min-h-screen">

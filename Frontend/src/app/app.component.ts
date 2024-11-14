@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   pageTitle = signal('');
   pageSlogan = signal('');
   socialLinks = signal<{ type: string, url: string }[]>([]);
+  logoUrl: string | null = null; // Nueva propiedad para el logo
 
   constructor(
     private http: HttpClient,
@@ -42,6 +43,12 @@ export class AppComponent implements OnInit {
     this.loadPageTitle();
     this.loadPageSlogan();
     this.loadSocialLinks();
+    this.loadLogoUrl();  // Cargar la URL del logo
+  }
+
+  loadLogoUrl() {
+    // Asignamos directamente la URL del logo (esto puede venir de un servicio o ser estático)
+    this.logoUrl = 'https://taller-backend-two.vercel.app/images/67354be52974778166a2ec0d'; // O desde un servicio
   }
 
   toggleTheme() {

@@ -1,0 +1,66 @@
+<div class="flex flex-wrap justify-center space-x-4">
+  <section class="configuracion max-w-lg p-6 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg shadow-md border border-gray-300 dark:border-gray-600">
+    <h2 class="text-2xl font-semibold text-center mb-6 text-yellow-500">Configuración de Administración</h2>
+
+    <!-- Mensaje de éxito o error -->
+    <div *ngIf="updateSuccess !== null" class="alert p-4 mb-4 rounded text-center"
+         [ngClass]="{'bg-green-100 text-green-700': updateSuccess, 'bg-red-100 text-red-700': !updateSuccess}">
+      {{ updateSuccess ? 'Configuración actualizada exitosamente.' : 'Error al actualizar la configuración.' }}
+    </div>
+
+    <!-- Formulario de configuración -->
+    <form (ngSubmit)="updateConfiguration()" class="space-y-4">
+      <!-- Número de intentos de inicio de sesión -->
+      <div>
+        <label for="loginAttempts" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Número de Intentos de Inicio de Sesión:</label>
+        <input id="loginAttempts" type="number" [(ngModel)]="config.loginAttempts" name="loginAttempts" class="p-2 border border-gray-300 dark:border-gray-600 rounded w-full text-gray-900 dark:text-gray-200 bg-gray-50 dark:bg-gray-700" required>
+      </div>
+
+      <!-- Tiempo de vida del token -->
+      <div>
+        <label for="tokenLifetime" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Tiempo de Vida del Token (minutos):</label>
+        <input id="tokenLifetime" type="number" [(ngModel)]="config.tokenLifetime" name="tokenLifetime" class="p-2 border border-gray-300 dark:border-gray-600 rounded w-full text-gray-900 dark:text-gray-200 bg-gray-50 dark:bg-gray-700" required>
+        <small class="text-gray-500 dark:text-gray-400">Cantidad de minutos que se desea bloquear.</small>
+      </div>
+
+      <!-- Título del correo de verificación -->
+      <div>
+        <label for="emailTitle" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Título del Correo de Verificación:</label>
+        <input id="emailTitle" type="text" [(ngModel)]="config.emailTitle" name="emailTitle" class="p-2 border border-gray-300 dark:border-gray-600 rounded w-full text-gray-900 dark:text-gray-200 bg-gray-50 dark:bg-gray-700" required>
+      </div>
+
+      <!-- Saludo del correo -->
+      <div>
+        <label for="emailGreeting" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Saludo del Correo:</label>
+        <input id="emailGreeting" type="text" [(ngModel)]="config.emailGreeting" name="emailGreeting" class="p-2 border border-gray-300 dark:border-gray-600 rounded w-full text-gray-900 dark:text-gray-200 bg-gray-50 dark:bg-gray-700" required>
+      </div>
+
+      <!-- Despedida del correo -->
+      <div>
+        <label for="emailFarewell" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Despedida del Correo:</label>
+        <input id="emailFarewell" type="text" [(ngModel)]="config.emailFarewell" name="emailFarewell" class="p-2 border border-gray-300 dark:border-gray-600 rounded w-full text-gray-900 dark:text-gray-200 bg-gray-50 dark:bg-gray-700" required>
+      </div>
+
+      <button type="submit" class="w-full bg-yellow-500 text-white p-2 rounded hover:bg-yellow-400 transition-colors">Guardar Configuración</button>
+    </form>
+  </section>
+
+  <section class="logo max-w-lg p-6 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-lg shadow-md border border-gray-300 dark:border-gray-600">
+    <h2 class="text-2xl font-semibold text-center mb-6 text-yellow-500">Logo de la Empresa</h2>
+  
+    <!-- Mostrar la imagen más reciente -->
+    <div class="mb-4 text-center">
+      <img *ngIf="logoUrl" [src]="logoUrl" alt="Logo de la Empresa" class="max-w-full h-auto rounded">
+    </div>
+  
+    <!-- Formulario para actualizar la imagen -->
+    <form (ngSubmit)="updateImage()" class="space-y-4">
+      <div>
+        <label for="file" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Seleccionar nuevo logo:</label>
+        <input type="file" id="file" (change)="onFileSelected($event)" class="block w-full text-sm text-gray-900 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded cursor-pointer focus:outline-none">
+      </div>
+  
+      <button type="submit" class="w-full bg-yellow-500 text-white p-2 rounded hover:bg-yellow-400 transition-colors">Actualizar Logo</button>
+    </form>
+  </section>
+</div>

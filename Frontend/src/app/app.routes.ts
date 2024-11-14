@@ -15,6 +15,7 @@ import { AdminPageComponent } from './componentes/admin/admin-page/admin-page.co
 import { AdministrativoComponent } from './componentes/admin/administrativo/administrativo.component';
 import { IncidentComponent } from './componentes/admin/incident/incident.component';
 import { AdminHeaderComponent } from './componentes/admin/admin-header/admin-header.component';
+import { ConfiguracionComponent } from './componentes/admin/configuracion/configuracion.component';
 import { Path } from 'leaflet';
 import { Component } from '@angular/core';
 
@@ -35,6 +36,7 @@ export const routes: Routes = [
   {path : 'administrativo' , component : AdministrativoComponent },
   {path : 'inidencias',  component : IncidentComponent},
   {path: "admin",component: AdminHeaderComponent},
+  {path: "configuracion", component: ConfiguracionComponent},
 
   { path: 'admin', redirectTo: '/principal', pathMatch: 'full' },
   { path: '**', redirectTo: '/principal' }
