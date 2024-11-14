@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { IncidentmonitorService } from './incidentmonitor.service';
 import { User } from 'src/users/schemas/user-schema';
 import { Incident } from 'src/users/schemas/incident-schema';
@@ -7,9 +7,21 @@ import { Incident } from 'src/users/schemas/incident-schema';
 export class IncidentmonitorController {
     constructor(private incidentService: IncidentmonitorService) { }
 
-    @Get('users')
+    @Get('clients')
     getUsers(): Promise<User[]> {
         return this.incidentService.getUsers();
+    }
+
+    // Obtener todos los usuarios 'client' que están bloqueados
+    @Get('blocked-clients')
+    async getBlockedClients(): Promise<User[]> {
+        return this.incidentService.getBlockedClients();
+    }
+
+    // Obtener todos los usuarios 'client' que no están bloqueados
+    @Get('unblocked-clients')
+    async getActiveClients(): Promise<User[]> {
+        return this.incidentService.getActiveClients();
     }
 
     @Get('incidents')

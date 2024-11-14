@@ -7,7 +7,7 @@ import path from 'path';
 import { ImagesDto } from './dto/images-dto/images-dto';
 import * as crypto from 'crypto';
 import { Response } from 'express';
-
+import * as sharp from 'sharp';
 
 @Controller('images')
 export class ImagesController {
@@ -84,17 +84,29 @@ export class ImagesController {
         @UploadedFile() file: Express.Multer.File,
     ) {
         if (!file) {
-            throw new Error("File not provided"); // Manejo de error si no hay archivo
+            throw new Error("File not provided");
         }
 
-        // Extrae el contenido binario (buffer) y el tipo de contenido (mimetype)
         const { buffer, mimetype } = file;
+
+        // Verificar si la imagen tiene transparencia usando sharp
+        if (mimetype === 'image/png') {
+            const image = sharp(buffer);
+            const metadata = await image.metadata();
+
+            if (metadata.hasAlpha) {
+                console.log("La imagen tiene transparencia");
+            } else {
+                console.log("La imagen no tiene transparencia");
+            }
+        }
 
         // Llamar al servicio para actualizar la imagen en la base de datos
         return await this.imagesService.updateFile(id, {
-            filename: file.originalname,  // Usar el nombre original del archivo
-            data: buffer,                 // Los datos binarios de la imagen
-            contentType: mimetype,        // Tipo de contenido (ej. "image/jpeg")
+            filename: file.originalname,
+            data: buffer,
+            contentType: mimetype,
         });
     }
+
 }
