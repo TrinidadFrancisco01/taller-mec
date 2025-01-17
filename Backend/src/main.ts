@@ -12,7 +12,7 @@ async function bootstrap() {
 
   // Habilita CORS para permitir cualquier origen
   app.enableCors({
-    origin: ['https://tallerheber.losdela.com'], // Permite solicitudes solo desde este origen
+    origin: ['https://tallerheber.losdela.com', 'http://localhost:4200'], // Permite solicitudes solo desde este origen
     methods: 'OPTIONS,GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Si usas cookies o autenticación
   });
